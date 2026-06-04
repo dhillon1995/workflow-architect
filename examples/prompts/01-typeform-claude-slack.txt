@@ -1,0 +1,1 @@
+When a Typeform is submitted, summarize the responses with Claude and post the summary to the #leads channel in Slack.

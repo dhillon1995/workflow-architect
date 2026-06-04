@@ -1,0 +1,21 @@
+{
+  "name": "@workflow-architect/n8n-catalog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./nodes.json": "./nodes.json"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').copyFileSync('nodes.json','dist/nodes.json')\"",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

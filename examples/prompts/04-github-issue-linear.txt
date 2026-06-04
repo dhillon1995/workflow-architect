@@ -1,0 +1,1 @@
+When a GitHub issue is labeled "bug", create a corresponding Linear issue in the Engineering team with the same title and body.

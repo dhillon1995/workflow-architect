@@ -1,0 +1,6 @@
+ERROR: Node "Send Slack Message" - Credentials not found. The credential "Slack API" required by this node is not configured. Please add valid Slack credentials in the n8n settings before executing this workflow.
+
+NodeApiError: Node credentials not found
+  at CredentialManager.getCredentials
+  node: "Send Slack Message"
+  type: "n8n-nodes-base.slack"

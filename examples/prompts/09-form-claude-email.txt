@@ -1,0 +1,1 @@
+When a contact form is submitted via n8n's built-in form, use Claude to classify the enquiry as sales, support, or other, then route it to the correct email address using SMTP.

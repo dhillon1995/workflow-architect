@@ -1,0 +1,7 @@
+ERROR: Workflow validation failed — broken connection detected.
+The connection source "Shopify Trigger" does not match any node name in the workflow.
+
+NodeNotFoundError: Connection references node "Shopify Trigger" but no node with that name exists.
+  Existing node names: ["Shopify Order Trigger", "Filter High Value", "Post to Slack"]
+  Connections are keyed by node display name, not by node ID.
+  Check that the connection key exactly matches the "name" field of the source node.

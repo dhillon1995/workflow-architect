@@ -1,0 +1,46 @@
+{
+  "name": "HubSpot Contact Creator",
+  "nodes": [
+    {
+      "id": "d1b2c3d4-0000-0000-0000-000000000001",
+      "name": "Form Trigger",
+      "type": "n8n-nodes-base.n8nFormTrigger",
+      "typeVersion": 2.2,
+      "position": [250, 300],
+      "parameters": {
+        "formTitle": "Contact Us",
+        "formFields": {
+          "values": [
+            { "fieldLabel": "Name", "fieldType": "text", "requiredField": true },
+            { "fieldLabel": "Email", "fieldType": "email", "requiredField": true }
+          ]
+        }
+      },
+      "webhookId": "ghi-789"
+    },
+    {
+      "id": "d1b2c3d4-0000-0000-0000-000000000002",
+      "name": "Create HubSpot Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [500, 300],
+      "parameters": {
+        "resource": "contact",
+        "operation": "create",
+        "additionalFields": {
+          "firstName": "={{ $json.Name.split(' ')[0] }}"
+        }
+      },
+      "credentials": {
+        "hubspotAppToken": { "id": "cred-003", "name": "HubSpot App Token" }
+      }
+    }
+  ],
+  "connections": {
+    "Form Trigger": {
+      "main": [[{ "node": "Create HubSpot Contact", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" }
+}

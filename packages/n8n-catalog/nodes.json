@@ -1,0 +1,1155 @@
+[
+  {
+    "type": "n8n-nodes-base.manualTrigger",
+    "displayName": "Manual Trigger",
+    "category": "trigger",
+    "description": "Start the workflow manually by clicking the execute button",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["start", "manual", "trigger", "run", "test"],
+    "requiredParameters": [],
+    "optionalParameters": [],
+    "credentialsType": null,
+    "examplePrompt": "Start manually"
+  },
+  {
+    "type": "n8n-nodes-base.webhook",
+    "displayName": "Webhook",
+    "category": "trigger",
+    "description": "Receive HTTP requests from external services to trigger the workflow",
+    "isTrigger": true,
+    "typeVersion": 2,
+    "keywords": ["webhook", "http", "post", "receive", "api", "endpoint", "trigger", "incoming"],
+    "requiredParameters": [
+      { "name": "httpMethod", "type": "options", "options": ["GET", "POST", "PUT", "PATCH", "DELETE"], "default": "POST" },
+      { "name": "path", "type": "string", "description": "URL path for the webhook (e.g. 'my-webhook')" }
+    ],
+    "optionalParameters": [
+      { "name": "responseMode", "type": "options", "options": ["onReceived", "lastNode"] },
+      { "name": "options", "type": "object" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "When a webhook POST is received at /my-endpoint"
+  },
+  {
+    "type": "n8n-nodes-base.scheduleTrigger",
+    "displayName": "Schedule Trigger",
+    "category": "trigger",
+    "description": "Run the workflow on a time-based schedule using cron expressions or intervals",
+    "isTrigger": true,
+    "typeVersion": 1.2,
+    "keywords": ["schedule", "cron", "timer", "interval", "daily", "weekly", "monthly", "every", "recurring", "automation"],
+    "requiredParameters": [
+      {
+        "name": "rule",
+        "type": "object",
+        "description": "Schedule rule — e.g. { interval: [{ field: 'cronExpression', expression: '0 9 * * 1' }] }"
+      }
+    ],
+    "optionalParameters": [],
+    "credentialsType": null,
+    "examplePrompt": "Every Monday at 9am"
+  },
+  {
+    "type": "n8n-nodes-base.errorTrigger",
+    "displayName": "Error Trigger",
+    "category": "trigger",
+    "description": "Trigger a workflow when another workflow encounters an error",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["error", "failed", "failure", "exception", "catch", "alert"],
+    "requiredParameters": [],
+    "optionalParameters": [],
+    "credentialsType": null,
+    "examplePrompt": "When any workflow fails"
+  },
+  {
+    "type": "n8n-nodes-base.typeformTrigger",
+    "displayName": "Typeform Trigger",
+    "category": "trigger",
+    "description": "Start workflow when a Typeform form is submitted",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["typeform", "form", "survey", "submission", "response", "trigger"],
+    "requiredParameters": [
+      { "name": "formId", "type": "string", "description": "The ID of the Typeform form to watch" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "typeformApi",
+    "examplePrompt": "When a Typeform is submitted"
+  },
+  {
+    "type": "n8n-nodes-base.n8nFormTrigger",
+    "displayName": "n8n Form Trigger",
+    "category": "trigger",
+    "description": "Create a hosted form in n8n and trigger when it is submitted",
+    "isTrigger": true,
+    "typeVersion": 2.2,
+    "keywords": ["form", "survey", "n8n", "submission", "contact", "trigger"],
+    "requiredParameters": [
+      { "name": "formTitle", "type": "string", "description": "Title displayed on the form" },
+      { "name": "formFields", "type": "array", "description": "List of form field definitions" }
+    ],
+    "optionalParameters": [
+      { "name": "responseMode", "type": "options", "options": ["onReceived", "lastNode"] }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "When a contact form is submitted via n8n's hosted form"
+  },
+  {
+    "type": "n8n-nodes-base.githubTrigger",
+    "displayName": "GitHub Trigger",
+    "category": "trigger",
+    "description": "Trigger on GitHub events: push, pull request, issue, release, star, etc.",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["github", "git", "push", "pull request", "pr", "issue", "commit", "release", "star", "trigger"],
+    "requiredParameters": [
+      { "name": "owner", "type": "string", "description": "GitHub organisation or username" },
+      { "name": "repository", "type": "string", "description": "Repository name" },
+      { "name": "events", "type": "multiOptions", "options": ["push", "pull_request", "issues", "release", "star", "fork", "create", "delete"] }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "githubApi",
+    "examplePrompt": "When a GitHub issue is opened or closed"
+  },
+  {
+    "type": "n8n-nodes-base.stripeTrigger",
+    "displayName": "Stripe Trigger",
+    "category": "trigger",
+    "description": "Trigger on Stripe events: payment succeeded, subscription created, charge failed, etc.",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["stripe", "payment", "charge", "subscription", "invoice", "customer", "webhook", "billing"],
+    "requiredParameters": [
+      { "name": "events", "type": "multiOptions", "options": ["charge.succeeded", "charge.failed", "payment_intent.succeeded", "customer.subscription.created", "customer.subscription.deleted", "invoice.paid", "invoice.payment_failed"] }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "stripeApi",
+    "examplePrompt": "When a Stripe payment succeeds"
+  },
+  {
+    "type": "n8n-nodes-base.shopifyTrigger",
+    "displayName": "Shopify Trigger",
+    "category": "trigger",
+    "description": "Trigger on Shopify events: new order, fulfillment, refund, product updates",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["shopify", "ecommerce", "order", "product", "customer", "fulfillment", "refund"],
+    "requiredParameters": [
+      { "name": "topic", "type": "options", "options": ["orders/create", "orders/fulfilled", "orders/paid", "orders/cancelled", "products/create", "products/update", "customers/create", "refunds/create"] }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "shopifyApi",
+    "examplePrompt": "When a new Shopify order is placed"
+  },
+  {
+    "type": "n8n-nodes-base.airtableTrigger",
+    "displayName": "Airtable Trigger",
+    "category": "trigger",
+    "description": "Trigger when rows are added to an Airtable table",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["airtable", "database", "table", "row", "record", "added", "created"],
+    "requiredParameters": [
+      { "name": "baseId", "type": "string", "description": "Airtable base ID (e.g. appXXXXXX)" },
+      { "name": "tableId", "type": "string", "description": "Table name or ID" }
+    ],
+    "optionalParameters": [
+      { "name": "triggerField", "type": "string", "description": "Field to detect new records by" }
+    ],
+    "credentialsType": "airtableTokenApi",
+    "examplePrompt": "When a row is added to an Airtable table"
+  },
+  {
+    "type": "n8n-nodes-base.emailReadImap",
+    "displayName": "Email Trigger (IMAP)",
+    "category": "trigger",
+    "description": "Trigger when a new email is received in an IMAP mailbox",
+    "isTrigger": true,
+    "typeVersion": 2,
+    "keywords": ["email", "imap", "inbox", "mail", "receive", "gmail", "outlook"],
+    "requiredParameters": [
+      { "name": "mailbox", "type": "string", "default": "INBOX" }
+    ],
+    "optionalParameters": [
+      { "name": "postProcessAction", "type": "options", "options": ["read", "delete"] },
+      { "name": "downloadAttachments", "type": "boolean" }
+    ],
+    "credentialsType": "imap",
+    "examplePrompt": "When a new email arrives in the inbox"
+  },
+  {
+    "type": "n8n-nodes-base.hubspotTrigger",
+    "displayName": "HubSpot Trigger",
+    "category": "trigger",
+    "description": "Trigger on HubSpot events: contact created, deal stage changed, form submitted",
+    "isTrigger": true,
+    "typeVersion": 1,
+    "keywords": ["hubspot", "crm", "contact", "deal", "lead", "form", "marketing"],
+    "requiredParameters": [
+      { "name": "eventsUi", "type": "object", "description": "Event subscriptions (contact.creation, deal.propertyChange, etc.)" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "hubspotAppToken",
+    "examplePrompt": "When a new contact is created in HubSpot"
+  },
+  {
+    "type": "n8n-nodes-base.slack",
+    "displayName": "Slack",
+    "category": "communication",
+    "description": "Send messages, reply to threads, manage channels and users in Slack",
+    "isTrigger": false,
+    "typeVersion": 2.2,
+    "keywords": ["slack", "message", "channel", "notification", "alert", "post", "chat", "team"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["message", "channel", "user", "reaction", "file"], "default": "message" },
+      { "name": "operation", "type": "options", "options": ["post", "update", "delete", "get", "getAll"], "default": "post" }
+    ],
+    "optionalParameters": [
+      { "name": "channel", "type": "string", "description": "Channel ID or name with # prefix (e.g. #general)" },
+      { "name": "text", "type": "string", "description": "Message text — supports Slack markdown" },
+      { "name": "blocks", "type": "json", "description": "Slack Block Kit JSON for rich messages" },
+      { "name": "username", "type": "string" },
+      { "name": "as_user", "type": "boolean" }
+    ],
+    "credentialsType": "slackApi",
+    "examplePrompt": "Post a message to #leads channel in Slack"
+  },
+  {
+    "type": "n8n-nodes-base.discord",
+    "displayName": "Discord",
+    "category": "communication",
+    "description": "Send messages to Discord channels via webhook or bot token",
+    "isTrigger": false,
+    "typeVersion": 2,
+    "keywords": ["discord", "message", "channel", "server", "bot", "notification"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["message", "channel", "member"], "default": "message" },
+      { "name": "operation", "type": "options", "options": ["send", "get", "delete"], "default": "send" }
+    ],
+    "optionalParameters": [
+      { "name": "channelId", "type": "string" },
+      { "name": "content", "type": "string" },
+      { "name": "embeds", "type": "json" }
+    ],
+    "credentialsType": "discordApi",
+    "examplePrompt": "Send a message to a Discord channel"
+  },
+  {
+    "type": "n8n-nodes-base.gmail",
+    "displayName": "Gmail",
+    "category": "communication",
+    "description": "Send, read, label, and manage emails in Gmail",
+    "isTrigger": false,
+    "typeVersion": 2.1,
+    "keywords": ["gmail", "email", "mail", "send", "google", "inbox"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["message", "label", "draft", "thread"], "default": "message" },
+      { "name": "operation", "type": "options", "options": ["send", "get", "getAll", "delete", "addLabels", "removeLabels", "reply"], "default": "send" }
+    ],
+    "optionalParameters": [
+      { "name": "toList", "type": "string", "description": "Recipient email addresses" },
+      { "name": "subject", "type": "string" },
+      { "name": "message", "type": "string" },
+      { "name": "emailType", "type": "options", "options": ["text", "html"] }
+    ],
+    "credentialsType": "gmailOAuth2",
+    "examplePrompt": "Send an email via Gmail"
+  },
+  {
+    "type": "n8n-nodes-base.emailSend",
+    "displayName": "Send Email",
+    "category": "communication",
+    "description": "Send email via SMTP — works with any mail server including Gmail, Outlook, SendGrid",
+    "isTrigger": false,
+    "typeVersion": 2.1,
+    "keywords": ["email", "smtp", "send", "mail", "notify", "notification"],
+    "requiredParameters": [
+      { "name": "fromEmail", "type": "string" },
+      { "name": "toEmail", "type": "string" },
+      { "name": "subject", "type": "string" },
+      { "name": "text", "type": "string" }
+    ],
+    "optionalParameters": [
+      { "name": "html", "type": "string" },
+      { "name": "attachments", "type": "string" },
+      { "name": "ccEmail", "type": "string" },
+      { "name": "bccEmail", "type": "string" }
+    ],
+    "credentialsType": "smtp",
+    "examplePrompt": "Send an email via SMTP"
+  },
+  {
+    "type": "n8n-nodes-base.telegram",
+    "displayName": "Telegram",
+    "category": "communication",
+    "description": "Send messages and files via a Telegram bot",
+    "isTrigger": false,
+    "typeVersion": 1.2,
+    "keywords": ["telegram", "bot", "message", "notify", "chat", "alert"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["message", "file", "chat"], "default": "message" },
+      { "name": "operation", "type": "options", "options": ["sendMessage", "sendPhoto", "sendDocument"], "default": "sendMessage" },
+      { "name": "chatId", "type": "string", "description": "Telegram chat ID or @username" },
+      { "name": "text", "type": "string" }
+    ],
+    "optionalParameters": [
+      { "name": "parse_mode", "type": "options", "options": ["Markdown", "HTML"] }
+    ],
+    "credentialsType": "telegramApi",
+    "examplePrompt": "Send a Telegram message"
+  },
+  {
+    "type": "n8n-nodes-base.twilio",
+    "displayName": "Twilio",
+    "category": "communication",
+    "description": "Send SMS and make calls using Twilio",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["twilio", "sms", "text", "message", "phone", "call", "notify"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["sms", "call"], "default": "sms" },
+      { "name": "operation", "type": "options", "options": ["send"], "default": "send" },
+      { "name": "from", "type": "string", "description": "Your Twilio phone number" },
+      { "name": "to", "type": "string", "description": "Recipient phone number in E.164 format" },
+      { "name": "message", "type": "string" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "twilioApi",
+    "examplePrompt": "Send an SMS via Twilio"
+  },
+  {
+    "type": "n8n-nodes-base.googleSheets",
+    "displayName": "Google Sheets",
+    "category": "data",
+    "description": "Read, append, update, and delete rows in Google Sheets",
+    "isTrigger": false,
+    "typeVersion": 4.5,
+    "keywords": ["google sheets", "spreadsheet", "excel", "table", "row", "data", "append", "read", "update"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["spreadsheet", "sheet"], "default": "sheet" },
+      { "name": "operation", "type": "options", "options": ["appendOrUpdate", "read", "update", "clear", "delete", "create"], "default": "appendOrUpdate" },
+      { "name": "documentId", "type": "string", "description": "Google Sheets document ID from the URL" },
+      { "name": "sheetName", "type": "string", "description": "Sheet tab name" }
+    ],
+    "optionalParameters": [
+      { "name": "dataStartRow", "type": "number" },
+      { "name": "keyRow", "type": "number" }
+    ],
+    "credentialsType": "googleSheetsOAuth2Api",
+    "examplePrompt": "Append a row to a Google Sheet"
+  },
+  {
+    "type": "n8n-nodes-base.airtable",
+    "displayName": "Airtable",
+    "category": "data",
+    "description": "Create, read, update, and delete records in Airtable bases",
+    "isTrigger": false,
+    "typeVersion": 2.1,
+    "keywords": ["airtable", "database", "table", "record", "row", "base", "create", "update"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["record", "table"], "default": "record" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "list", "update", "delete", "upsert"], "default": "create" },
+      { "name": "base", "type": "resourceLocator", "description": "Airtable base" },
+      { "name": "table", "type": "resourceLocator", "description": "Table within the base" }
+    ],
+    "optionalParameters": [
+      { "name": "fields", "type": "object" }
+    ],
+    "credentialsType": "airtableTokenApi",
+    "examplePrompt": "Create a record in Airtable"
+  },
+  {
+    "type": "n8n-nodes-base.notion",
+    "displayName": "Notion",
+    "category": "data",
+    "description": "Create and update pages, databases, and blocks in Notion",
+    "isTrigger": false,
+    "typeVersion": 2.2,
+    "keywords": ["notion", "page", "database", "block", "note", "document", "knowledge base"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["block", "database", "databasePage", "page", "user"], "default": "page" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "archive", "search"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "pageId", "type": "string" },
+      { "name": "title", "type": "string" },
+      { "name": "propertiesUi", "type": "object" }
+    ],
+    "credentialsType": "notionApi",
+    "examplePrompt": "Create a new page in Notion"
+  },
+  {
+    "type": "n8n-nodes-base.postgres",
+    "displayName": "Postgres",
+    "category": "data",
+    "description": "Execute SQL queries, insert, update, and delete rows in PostgreSQL",
+    "isTrigger": false,
+    "typeVersion": 2.5,
+    "keywords": ["postgres", "postgresql", "sql", "database", "db", "query", "insert", "update"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["database"], "default": "database" },
+      { "name": "operation", "type": "options", "options": ["select", "insert", "update", "delete", "executeQuery"], "default": "select" }
+    ],
+    "optionalParameters": [
+      { "name": "query", "type": "string", "description": "SQL query string" },
+      { "name": "table", "type": "string" },
+      { "name": "columns", "type": "string" }
+    ],
+    "credentialsType": "postgres",
+    "examplePrompt": "Insert a record into a PostgreSQL database"
+  },
+  {
+    "type": "n8n-nodes-base.mySql",
+    "displayName": "MySQL",
+    "category": "data",
+    "description": "Execute SQL queries against MySQL or MariaDB databases",
+    "isTrigger": false,
+    "typeVersion": 2.4,
+    "keywords": ["mysql", "mariadb", "sql", "database", "db", "query"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["database"], "default": "database" },
+      { "name": "operation", "type": "options", "options": ["select", "insert", "update", "delete", "executeQuery"], "default": "select" }
+    ],
+    "optionalParameters": [
+      { "name": "query", "type": "string" },
+      { "name": "table", "type": "string" }
+    ],
+    "credentialsType": "mySql",
+    "examplePrompt": "Query a MySQL database"
+  },
+  {
+    "type": "n8n-nodes-base.googleDrive",
+    "displayName": "Google Drive",
+    "category": "data",
+    "description": "Upload, download, and manage files and folders in Google Drive",
+    "isTrigger": false,
+    "typeVersion": 3,
+    "keywords": ["google drive", "file", "upload", "download", "folder", "storage", "gdrive"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["file", "folder"], "default": "file" },
+      { "name": "operation", "type": "options", "options": ["copy", "create", "delete", "download", "get", "list", "move", "share", "update", "upload"], "default": "upload" }
+    ],
+    "optionalParameters": [
+      { "name": "folderId", "type": "string" },
+      { "name": "name", "type": "string" }
+    ],
+    "credentialsType": "googleDriveOAuth2Api",
+    "examplePrompt": "Upload a file to Google Drive"
+  },
+  {
+    "type": "n8n-nodes-base.googleDocs",
+    "displayName": "Google Docs",
+    "category": "data",
+    "description": "Create and update Google Docs documents",
+    "isTrigger": false,
+    "typeVersion": 2,
+    "keywords": ["google docs", "document", "write", "create", "text"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["document"], "default": "document" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "update"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "documentId", "type": "string" },
+      { "name": "title", "type": "string" },
+      { "name": "text", "type": "string" }
+    ],
+    "credentialsType": "googleDocsOAuth2Api",
+    "examplePrompt": "Create a Google Doc with content"
+  },
+  {
+    "type": "@n8n/n8n-nodes-langchain.agent",
+    "displayName": "AI Agent",
+    "category": "ai",
+    "description": "An autonomous AI agent that can use tools and make decisions to complete tasks",
+    "isTrigger": false,
+    "typeVersion": 1.7,
+    "keywords": ["ai", "agent", "llm", "gpt", "claude", "autonomous", "tools", "reasoning"],
+    "requiredParameters": [
+      { "name": "text", "type": "string", "description": "The input prompt or task for the agent" }
+    ],
+    "optionalParameters": [
+      { "name": "systemMessage", "type": "string" },
+      { "name": "maxIterations", "type": "number", "default": 10 }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Use an AI agent to process data"
+  },
+  {
+    "type": "@n8n/n8n-nodes-langchain.chainLlm",
+    "displayName": "Basic LLM Chain",
+    "category": "ai",
+    "description": "Send a prompt to an LLM and get a text response",
+    "isTrigger": false,
+    "typeVersion": 1.4,
+    "keywords": ["llm", "ai", "gpt", "claude", "prompt", "summarize", "generate", "text", "langchain"],
+    "requiredParameters": [
+      { "name": "prompt", "type": "string", "description": "The prompt to send to the language model" }
+    ],
+    "optionalParameters": [
+      { "name": "messages", "type": "array" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Summarize the input with Claude or GPT"
+  },
+  {
+    "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+    "displayName": "Summarization Chain",
+    "category": "ai",
+    "description": "Summarize long documents or text using an LLM",
+    "isTrigger": false,
+    "typeVersion": 2,
+    "keywords": ["summarize", "summary", "llm", "ai", "text", "document", "tldr"],
+    "requiredParameters": [],
+    "optionalParameters": [
+      { "name": "chunkSize", "type": "number" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Summarize a long document"
+  },
+  {
+    "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+    "displayName": "Anthropic Chat Model",
+    "category": "ai",
+    "description": "Connect an Anthropic Claude model as the language model for AI chains and agents",
+    "isTrigger": false,
+    "typeVersion": 1.3,
+    "keywords": ["anthropic", "claude", "llm", "ai", "model", "sonnet", "opus", "haiku"],
+    "requiredParameters": [
+      { "name": "model", "type": "options", "options": ["claude-opus-4-5", "claude-sonnet-4-5", "claude-haiku-4-5-20251001"], "default": "claude-sonnet-4-5" }
+    ],
+    "optionalParameters": [
+      { "name": "temperature", "type": "number", "default": 0.7 },
+      { "name": "maxTokensToSample", "type": "number", "default": 2048 }
+    ],
+    "credentialsType": "anthropicApi",
+    "examplePrompt": "Use Claude as the AI model"
+  },
+  {
+    "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+    "displayName": "OpenAI Chat Model",
+    "category": "ai",
+    "description": "Connect an OpenAI GPT model as the language model for AI chains and agents",
+    "isTrigger": false,
+    "typeVersion": 1.2,
+    "keywords": ["openai", "gpt", "gpt-4", "llm", "ai", "model", "chatgpt"],
+    "requiredParameters": [
+      { "name": "model", "type": "options", "options": ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"], "default": "gpt-4o-mini" }
+    ],
+    "optionalParameters": [
+      { "name": "temperature", "type": "number", "default": 0.7 },
+      { "name": "maxTokens", "type": "number" }
+    ],
+    "credentialsType": "openAiApi",
+    "examplePrompt": "Use GPT-4 as the AI model"
+  },
+  {
+    "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+    "displayName": "Structured Output Parser",
+    "category": "ai",
+    "description": "Parse LLM output into a structured JSON object using a Zod/JSON schema",
+    "isTrigger": false,
+    "typeVersion": 1.2,
+    "keywords": ["parser", "structured", "json", "schema", "output", "llm"],
+    "requiredParameters": [
+      { "name": "jsonSchema", "type": "json", "description": "JSON schema defining the expected output shape" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": null,
+    "examplePrompt": "Parse the LLM output as structured JSON"
+  },
+  {
+    "type": "n8n-nodes-base.httpRequest",
+    "displayName": "HTTP Request",
+    "category": "utility",
+    "description": "Make HTTP/HTTPS requests to any REST API or URL",
+    "isTrigger": false,
+    "typeVersion": 4.2,
+    "keywords": ["http", "rest", "api", "request", "get", "post", "put", "delete", "fetch", "curl", "webhook", "call"],
+    "requiredParameters": [
+      { "name": "method", "type": "options", "options": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"], "default": "GET" },
+      { "name": "url", "type": "string", "description": "Full URL including https://" }
+    ],
+    "optionalParameters": [
+      { "name": "authentication", "type": "options", "options": ["none", "genericCredentialType", "predefinedCredentialType"] },
+      { "name": "sendBody", "type": "boolean" },
+      { "name": "bodyParameters", "type": "object" },
+      { "name": "headerParameters", "type": "object" },
+      { "name": "queryParameters", "type": "object" },
+      { "name": "options", "type": "object" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Call an external REST API"
+  },
+  {
+    "type": "n8n-nodes-base.code",
+    "displayName": "Code",
+    "category": "utility",
+    "description": "Execute custom JavaScript or Python code to transform data",
+    "isTrigger": false,
+    "typeVersion": 2,
+    "keywords": ["code", "javascript", "python", "script", "transform", "custom", "function", "logic"],
+    "requiredParameters": [
+      { "name": "language", "type": "options", "options": ["javaScript", "python"], "default": "javaScript" },
+      { "name": "jsCode", "type": "string", "description": "JavaScript code — return an array of items. Use $input.all() to access input." }
+    ],
+    "optionalParameters": [
+      { "name": "mode", "type": "options", "options": ["runOnceForAllItems", "runOnceForEachItem"], "default": "runOnceForAllItems" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Transform data with custom JavaScript"
+  },
+  {
+    "type": "n8n-nodes-base.if",
+    "displayName": "IF",
+    "category": "utility",
+    "description": "Route items down different paths based on conditions",
+    "isTrigger": false,
+    "typeVersion": 2.2,
+    "keywords": ["if", "condition", "branch", "route", "filter", "logic", "decision"],
+    "requiredParameters": [
+      { "name": "conditions", "type": "object", "description": "One or more conditions to evaluate" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": null,
+    "examplePrompt": "Branch workflow based on a condition"
+  },
+  {
+    "type": "n8n-nodes-base.switch",
+    "displayName": "Switch",
+    "category": "utility",
+    "description": "Route items to different outputs based on a value — like a multi-way IF",
+    "isTrigger": false,
+    "typeVersion": 3.2,
+    "keywords": ["switch", "route", "condition", "branch", "multiple", "cases", "logic"],
+    "requiredParameters": [
+      { "name": "mode", "type": "options", "options": ["rules", "expression"], "default": "rules" }
+    ],
+    "optionalParameters": [
+      { "name": "rules", "type": "object" },
+      { "name": "output", "type": "string" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Route items to different paths based on a field value"
+  },
+  {
+    "type": "n8n-nodes-base.merge",
+    "displayName": "Merge",
+    "category": "utility",
+    "description": "Combine data from multiple branches into one stream",
+    "isTrigger": false,
+    "typeVersion": 3,
+    "keywords": ["merge", "combine", "join", "aggregate", "collect", "wait", "sync"],
+    "requiredParameters": [
+      { "name": "mode", "type": "options", "options": ["append", "combine", "chooseBranch", "combineBySql", "combineByPosition"], "default": "append" }
+    ],
+    "optionalParameters": [
+      { "name": "joinMode", "type": "options", "options": ["inner", "left", "right", "outer"] },
+      { "name": "outputDataFrom", "type": "options", "options": ["input1", "input2", "both"] }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Merge data from two branches"
+  },
+  {
+    "type": "n8n-nodes-base.set",
+    "displayName": "Edit Fields",
+    "category": "utility",
+    "description": "Set, rename, or remove fields on items passing through the workflow",
+    "isTrigger": false,
+    "typeVersion": 3.4,
+    "keywords": ["set", "edit", "fields", "map", "transform", "rename", "assign", "value"],
+    "requiredParameters": [
+      { "name": "mode", "type": "options", "options": ["manual", "raw"], "default": "manual" }
+    ],
+    "optionalParameters": [
+      { "name": "assignments", "type": "object", "description": "Field assignments: name → value" },
+      { "name": "include", "type": "options", "options": ["all", "selected", "none"] }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Set or rename fields on items"
+  },
+  {
+    "type": "n8n-nodes-base.splitInBatches",
+    "displayName": "Loop Over Items",
+    "category": "utility",
+    "description": "Process a list of items in batches, looping through them one or several at a time",
+    "isTrigger": false,
+    "typeVersion": 3,
+    "keywords": ["loop", "batch", "iterate", "foreach", "split", "each", "items"],
+    "requiredParameters": [
+      { "name": "batchSize", "type": "number", "default": 1 }
+    ],
+    "optionalParameters": [],
+    "credentialsType": null,
+    "examplePrompt": "Loop over a list of items"
+  },
+  {
+    "type": "n8n-nodes-base.wait",
+    "displayName": "Wait",
+    "category": "utility",
+    "description": "Pause workflow execution for a specified time or until an event occurs",
+    "isTrigger": false,
+    "typeVersion": 1.1,
+    "keywords": ["wait", "delay", "pause", "sleep", "timer", "time"],
+    "requiredParameters": [
+      { "name": "resume", "type": "options", "options": ["timeInterval", "specificTime", "webhook"], "default": "timeInterval" }
+    ],
+    "optionalParameters": [
+      { "name": "amount", "type": "number" },
+      { "name": "unit", "type": "options", "options": ["seconds", "minutes", "hours", "days"] }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Wait 5 minutes before continuing"
+  },
+  {
+    "type": "n8n-nodes-base.respondToWebhook",
+    "displayName": "Respond to Webhook",
+    "category": "utility",
+    "description": "Send a custom HTTP response back to the caller when using a Webhook trigger",
+    "isTrigger": false,
+    "typeVersion": 1.1,
+    "keywords": ["respond", "webhook", "response", "http", "reply", "answer"],
+    "requiredParameters": [
+      { "name": "respondWith", "type": "options", "options": ["firstIncomingItem", "text", "json", "redirect", "noData"], "default": "firstIncomingItem" }
+    ],
+    "optionalParameters": [
+      { "name": "responseBody", "type": "string" },
+      { "name": "options", "type": "object" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Send a response back to the webhook caller"
+  },
+  {
+    "type": "n8n-nodes-base.noOp",
+    "displayName": "No Operation",
+    "category": "utility",
+    "description": "Pass through items unchanged — useful as a placeholder or to label branches",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["noop", "no-op", "pass", "placeholder", "through"],
+    "requiredParameters": [],
+    "optionalParameters": [],
+    "credentialsType": null,
+    "examplePrompt": "Pass through without modification"
+  },
+  {
+    "type": "n8n-nodes-base.stickyNote",
+    "displayName": "Sticky Note",
+    "category": "utility",
+    "description": "Add a documentation note to the canvas",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["note", "comment", "documentation", "sticky", "label"],
+    "requiredParameters": [
+      { "name": "content", "type": "string" }
+    ],
+    "optionalParameters": [
+      { "name": "height", "type": "number" },
+      { "name": "width", "type": "number" },
+      { "name": "color", "type": "number" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Add a note to the workflow"
+  },
+  {
+    "type": "n8n-nodes-base.github",
+    "displayName": "GitHub",
+    "category": "apps",
+    "description": "Manage repos, issues, pull requests, files, and releases on GitHub",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["github", "git", "repo", "issue", "pull request", "pr", "commit", "release", "code"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["file", "issue", "release", "repository", "review", "user"], "default": "issue" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete", "close", "comment"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "owner", "type": "string" },
+      { "name": "repository", "type": "string" },
+      { "name": "issueNumber", "type": "number" },
+      { "name": "title", "type": "string" },
+      { "name": "body", "type": "string" }
+    ],
+    "credentialsType": "githubApi",
+    "examplePrompt": "Create or update a GitHub issue"
+  },
+  {
+    "type": "n8n-nodes-base.jira",
+    "displayName": "Jira",
+    "category": "apps",
+    "description": "Create, update, and manage Jira issues, sprints, and projects",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["jira", "ticket", "issue", "sprint", "project", "task", "bug", "agile"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["issue", "issueAttachment", "issueComment", "issueType", "sprint", "user"], "default": "issue" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete", "notify", "transitions"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "project", "type": "string" },
+      { "name": "issueType", "type": "string" },
+      { "name": "summary", "type": "string" },
+      { "name": "description", "type": "string" }
+    ],
+    "credentialsType": "jiraSoftwareServerApi",
+    "examplePrompt": "Create a Jira ticket"
+  },
+  {
+    "type": "n8n-nodes-base.linear",
+    "displayName": "Linear",
+    "category": "apps",
+    "description": "Create and manage Linear issues, projects, teams, and comments",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["linear", "issue", "project", "team", "bug", "task", "roadmap", "engineering"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["comment", "cycle", "issue", "project", "team", "user"], "default": "issue" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "teamId", "type": "string" },
+      { "name": "title", "type": "string" },
+      { "name": "description", "type": "string" },
+      { "name": "priority", "type": "options", "options": ["0", "1", "2", "3", "4"] }
+    ],
+    "credentialsType": "linearApi",
+    "examplePrompt": "Create a Linear issue"
+  },
+  {
+    "type": "n8n-nodes-base.hubspot",
+    "displayName": "HubSpot",
+    "category": "apps",
+    "description": "Manage HubSpot contacts, companies, deals, and tickets via the CRM API",
+    "isTrigger": false,
+    "typeVersion": 2,
+    "keywords": ["hubspot", "crm", "contact", "deal", "company", "lead", "sales", "marketing"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["contact", "company", "deal", "ticket", "engagements", "form", "list"], "default": "contact" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete", "upsert"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "additionalFields", "type": "object" }
+    ],
+    "credentialsType": "hubspotAppToken",
+    "examplePrompt": "Create or update a HubSpot contact"
+  },
+  {
+    "type": "n8n-nodes-base.salesforce",
+    "displayName": "Salesforce",
+    "category": "apps",
+    "description": "Manage Salesforce leads, contacts, accounts, opportunities, and cases",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["salesforce", "crm", "lead", "contact", "opportunity", "account", "case", "sales"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["account", "attachment", "case", "contact", "customObject", "document", "flow", "lead", "opportunity", "search", "task", "user"], "default": "lead" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete", "upsert"], "default": "create" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "salesforceOAuth2Api",
+    "examplePrompt": "Create a Salesforce lead"
+  },
+  {
+    "type": "n8n-nodes-base.stripe",
+    "displayName": "Stripe",
+    "category": "apps",
+    "description": "Manage Stripe customers, charges, payment intents, and subscriptions",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["stripe", "payment", "charge", "customer", "subscription", "invoice", "billing", "card"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["balance", "charge", "coupon", "customer", "customerCard", "invoice", "invoiceItem", "paymentIntents", "payout", "plan", "product", "source", "subscriptions", "token"], "default": "customer" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "get" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "stripeApi",
+    "examplePrompt": "Look up a Stripe customer"
+  },
+  {
+    "type": "n8n-nodes-base.shopify",
+    "displayName": "Shopify",
+    "category": "apps",
+    "description": "Manage Shopify orders, products, customers, and inventory",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["shopify", "ecommerce", "order", "product", "customer", "inventory", "store"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["customer", "inventory", "metafield", "order", "product"], "default": "order" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "get" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "shopifyApi",
+    "examplePrompt": "Get Shopify order details"
+  },
+  {
+    "type": "n8n-nodes-base.asana",
+    "displayName": "Asana",
+    "category": "apps",
+    "description": "Create and manage Asana tasks, projects, and team members",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["asana", "task", "project", "team", "workflow", "to-do"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["project", "subtask", "task", "taskComment", "taskTag", "user"], "default": "task" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete", "comment"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "workspace", "type": "string" },
+      { "name": "name", "type": "string" },
+      { "name": "notes", "type": "string" },
+      { "name": "assignee", "type": "string" }
+    ],
+    "credentialsType": "asanaApi",
+    "examplePrompt": "Create an Asana task"
+  },
+  {
+    "type": "n8n-nodes-base.trello",
+    "displayName": "Trello",
+    "category": "apps",
+    "description": "Manage Trello boards, lists, and cards",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["trello", "card", "board", "list", "kanban", "task"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["attachment", "board", "card", "checklist", "label", "list", "member"], "default": "card" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "create" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "trelloApi",
+    "examplePrompt": "Create a Trello card"
+  },
+  {
+    "type": "n8n-nodes-base.zendesk",
+    "displayName": "Zendesk",
+    "category": "apps",
+    "description": "Manage Zendesk support tickets, users, and organizations",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["zendesk", "support", "ticket", "customer", "helpdesk", "service"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["ticket", "user", "organization"], "default": "ticket" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "create" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "zendeskApi",
+    "examplePrompt": "Create a Zendesk support ticket"
+  },
+  {
+    "type": "n8n-nodes-base.pipedrive",
+    "displayName": "Pipedrive",
+    "category": "apps",
+    "description": "Manage Pipedrive deals, contacts, organizations, and activities",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["pipedrive", "crm", "deal", "contact", "lead", "sales", "pipeline"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["activity", "deal", "file", "note", "organization", "person", "product"], "default": "deal" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete", "duplicate", "search"], "default": "create" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "pipedriveApi",
+    "examplePrompt": "Create a Pipedrive deal"
+  },
+  {
+    "type": "n8n-nodes-base.awsS3",
+    "displayName": "AWS S3",
+    "category": "data",
+    "description": "Upload, download, and manage files in Amazon S3 buckets",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["aws", "s3", "bucket", "file", "upload", "download", "storage", "amazon"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["bucket", "file", "folder"], "default": "file" },
+      { "name": "operation", "type": "options", "options": ["upload", "download", "delete", "getAll", "copy", "create"], "default": "upload" }
+    ],
+    "optionalParameters": [
+      { "name": "bucketName", "type": "string" },
+      { "name": "fileName", "type": "string" }
+    ],
+    "credentialsType": "aws",
+    "examplePrompt": "Upload a file to AWS S3"
+  },
+  {
+    "type": "n8n-nodes-base.mongoDb",
+    "displayName": "MongoDB",
+    "category": "data",
+    "description": "Insert, find, update, and delete documents in MongoDB collections",
+    "isTrigger": false,
+    "typeVersion": 1.1,
+    "keywords": ["mongodb", "nosql", "database", "document", "collection", "query"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["document"], "default": "document" },
+      { "name": "operation", "type": "options", "options": ["aggregate", "delete", "find", "findAndReplace", "findAndUpdate", "insert", "update"], "default": "find" }
+    ],
+    "optionalParameters": [
+      { "name": "collection", "type": "string" },
+      { "name": "query", "type": "json" }
+    ],
+    "credentialsType": "mongoDb",
+    "examplePrompt": "Find documents in MongoDB"
+  },
+  {
+    "type": "n8n-nodes-base.redis",
+    "displayName": "Redis",
+    "category": "data",
+    "description": "Get, set, and delete values in a Redis cache",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["redis", "cache", "key-value", "store", "get", "set", "expire"],
+    "requiredParameters": [
+      { "name": "operation", "type": "options", "options": ["delete", "get", "incr", "info", "keys", "set", "publish"], "default": "get" },
+      { "name": "key", "type": "string" }
+    ],
+    "optionalParameters": [
+      { "name": "value", "type": "string" },
+      { "name": "expire", "type": "boolean" },
+      { "name": "ttl", "type": "number" }
+    ],
+    "credentialsType": "redis",
+    "examplePrompt": "Get or set a value in Redis"
+  },
+  {
+    "type": "n8n-nodes-base.xml",
+    "displayName": "XML",
+    "category": "utility",
+    "description": "Convert between XML and JSON formats",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["xml", "json", "convert", "parse", "transform", "soap"],
+    "requiredParameters": [
+      { "name": "mode", "type": "options", "options": ["jsonToxml", "xmlTojson"], "default": "xmlTojson" }
+    ],
+    "optionalParameters": [
+      { "name": "propertyName", "type": "string", "default": "data" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Convert XML to JSON"
+  },
+  {
+    "type": "n8n-nodes-base.crypto",
+    "displayName": "Crypto",
+    "category": "utility",
+    "description": "Hash, sign, or generate random data using common cryptographic algorithms",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["crypto", "hash", "md5", "sha", "encrypt", "sign", "hmac", "uuid"],
+    "requiredParameters": [
+      { "name": "action", "type": "options", "options": ["hash", "hmac", "sign", "generateRandomString"] },
+      { "name": "type", "type": "options", "options": ["MD5", "SHA256", "SHA512", "SHA384"] }
+    ],
+    "optionalParameters": [
+      { "name": "encoding", "type": "options", "options": ["hex", "base64"] }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Hash a string with SHA256"
+  },
+  {
+    "type": "n8n-nodes-base.dateTime",
+    "displayName": "Date & Time",
+    "category": "utility",
+    "description": "Parse, format, and manipulate dates and times",
+    "isTrigger": false,
+    "typeVersion": 2,
+    "keywords": ["date", "time", "format", "parse", "convert", "timestamp", "timezone"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["currentTime", "formatDate", "betweenDates", "roundUpDate", "extractDateParts", "addToDate", "subtractFromDate"], "default": "formatDate" }
+    ],
+    "optionalParameters": [
+      { "name": "date", "type": "string" },
+      { "name": "format", "type": "string" }
+    ],
+    "credentialsType": null,
+    "examplePrompt": "Format a date string"
+  },
+  {
+    "type": "n8n-nodes-base.zoom",
+    "displayName": "Zoom",
+    "category": "apps",
+    "description": "Create and manage Zoom meetings and webinars",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["zoom", "meeting", "video", "webinar", "call", "conference"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["meeting", "meetingRegistrant", "recording", "webinar", "webinarPanelist", "webinarRegistrant"], "default": "meeting" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "userId", "type": "string", "default": "me" },
+      { "name": "topic", "type": "string" },
+      { "name": "type", "type": "options" }
+    ],
+    "credentialsType": "zoomApi",
+    "examplePrompt": "Schedule a Zoom meeting"
+  },
+  {
+    "type": "n8n-nodes-base.dropbox",
+    "displayName": "Dropbox",
+    "category": "data",
+    "description": "Upload, download, and manage files in Dropbox",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["dropbox", "file", "upload", "download", "folder", "storage", "share"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["file", "folder", "search"], "default": "file" },
+      { "name": "operation", "type": "options", "options": ["copy", "create", "delete", "download", "list", "move", "share", "upload"], "default": "upload" }
+    ],
+    "optionalParameters": [
+      { "name": "path", "type": "string" }
+    ],
+    "credentialsType": "dropboxApi",
+    "examplePrompt": "Upload a file to Dropbox"
+  },
+  {
+    "type": "n8n-nodes-base.microsoftTeams",
+    "displayName": "Microsoft Teams",
+    "category": "communication",
+    "description": "Send messages and manage channels in Microsoft Teams",
+    "isTrigger": false,
+    "typeVersion": 2,
+    "keywords": ["microsoft", "teams", "message", "channel", "office", "notification", "chat"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["channel", "channelMessage", "chat", "chatMessage", "task"], "default": "channelMessage" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "create" }
+    ],
+    "optionalParameters": [
+      { "name": "teamId", "type": "string" },
+      { "name": "channelId", "type": "string" },
+      { "name": "message", "type": "string" }
+    ],
+    "credentialsType": "microsoftTeamsOAuth2Api",
+    "examplePrompt": "Post a message to Microsoft Teams"
+  },
+  {
+    "type": "n8n-nodes-base.calCom",
+    "displayName": "Cal.com",
+    "category": "apps",
+    "description": "Manage Cal.com bookings and availability",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["calendar", "booking", "schedule", "appointment", "meeting", "cal.com"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["booking", "availability", "eventType"], "default": "booking" },
+      { "name": "operation", "type": "options", "options": ["get", "getAll", "delete"], "default": "getAll" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "calApi",
+    "examplePrompt": "Get upcoming Cal.com bookings"
+  },
+  {
+    "type": "n8n-nodes-base.freshdesk",
+    "displayName": "Freshdesk",
+    "category": "apps",
+    "description": "Manage Freshdesk support tickets, contacts, and companies",
+    "isTrigger": false,
+    "typeVersion": 1,
+    "keywords": ["freshdesk", "support", "ticket", "helpdesk", "customer", "contact"],
+    "requiredParameters": [
+      { "name": "resource", "type": "options", "options": ["agent", "company", "contact", "ticket"], "default": "ticket" },
+      { "name": "operation", "type": "options", "options": ["create", "get", "getAll", "update", "delete"], "default": "create" }
+    ],
+    "optionalParameters": [],
+    "credentialsType": "freshdeskApi",
+    "examplePrompt": "Create a Freshdesk ticket"
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "name": "Email Router",
+  "nodes": [
+    {
+      "id": "b1b2c3d4-0000-0000-0000-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "email-router",
+        "options": {}
+      },
+      "webhookId": "abc-123"
+    },
+    {
+      "id": "b1b2c3d4-0000-0000-0000-000000000002",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [500, 300],
+      "parameters": {
+        "fromEmail": "noreply@example.com",
+        "toEmail": "={{ $json.body.recipent }}",
+        "subject": "={{ $json.body.subject }}",
+        "text": "={{ $json.body.mesage }}"
+      },
+      "credentials": {
+        "smtp": { "id": "cred-001", "name": "SMTP Server" }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Send Email", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" }
+}

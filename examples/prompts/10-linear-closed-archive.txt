@@ -1,0 +1,1 @@
+When an issue is closed in Linear, look up the linked GitHub PR, add a comment "Shipped in PR #X", and archive the Linear issue.

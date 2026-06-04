@@ -1,0 +1,1 @@
+When a Stripe payment succeeds, log the customer name, amount, and timestamp to an Airtable base called "Revenue Tracker".

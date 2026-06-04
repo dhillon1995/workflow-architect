@@ -1,0 +1,8 @@
+ERROR: Node "Create HubSpot Contact" - Required parameter missing
+The "email" property is required when creating a HubSpot contact but was not provided.
+
+NodeOperationError: Property "email" is required for operation "create" on resource "contact"
+  The HubSpot contacts API requires at minimum one identifying property.
+  Provide at least one of: email, firstname + lastname
+  node: "Create HubSpot Contact"
+  parameter: "email"

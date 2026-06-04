@@ -1,0 +1,1 @@
+When a webhook POST arrives, insert the payload into a PostgreSQL table called "events", then send a Slack notification to #ops with the event type.

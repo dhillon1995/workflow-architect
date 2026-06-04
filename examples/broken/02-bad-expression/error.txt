@@ -1,0 +1,8 @@
+ERROR: Node "Send Email" - Expression evaluation error
+The expression "={{ $json.body.recipent }}" returned undefined.
+
+ExpressionError: Cannot read properties of undefined (reading 'recipent')
+  Check that the field name matches the exact key in the incoming data.
+  Received keys: ["recipient", "subject", "message"]
+  node: "Send Email"
+  parameter: "toEmail"

@@ -1,0 +1,9 @@
+ERROR: Node "Google Sheets" - Unknown operation "append"
+The operation "append" is not valid for Google Sheets node version 1.
+This workflow was created with an older version of n8n.
+
+NodeOperationError: The operation "append" does not exist on resource "spreadsheet"
+  Available operations for version 1: appendOrUpdate, read, update, clear, delete
+  Note: typeVersion 1 uses a different parameter schema than version 4.x
+  node: "Google Sheets"
+  typeVersion: 1

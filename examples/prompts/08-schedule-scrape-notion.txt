@@ -1,0 +1,1 @@
+Every day at 8am, call the Hacker News API to get the top 5 stories, and create a new page in a Notion database called "Daily Reading" with the titles and links.

@@ -1,0 +1,1 @@
+When a new Shopify order is placed over $100, send a message to the #high-value-orders Slack channel with the customer name, order total, and items purchased.

@@ -1,0 +1,1 @@
+When a new contact is created in HubSpot, send them a personalised welcome email via Gmail using their first name and company.

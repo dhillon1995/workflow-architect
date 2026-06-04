@@ -1,0 +1,63 @@
+{
+  "name": "Order Processor",
+  "nodes": [
+    {
+      "id": "e1b2c3d4-0000-0000-0000-000000000001",
+      "name": "Shopify Order Trigger",
+      "type": "n8n-nodes-base.shopifyTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {
+        "topic": "orders/create"
+      },
+      "credentials": {
+        "shopifyApi": { "id": "cred-004", "name": "Shopify Store" }
+      }
+    },
+    {
+      "id": "e1b2c3d4-0000-0000-0000-000000000002",
+      "name": "Filter High Value",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [500, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false },
+          "conditions": [{
+            "id": "cond-001",
+            "leftValue": "={{ $json.total_price }}",
+            "rightValue": 100,
+            "operator": { "type": "number", "operation": "gte" }
+          }],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "e1b2c3d4-0000-0000-0000-000000000003",
+      "name": "Post to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [750, 300],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": "#high-value-orders",
+        "text": "New high-value order: $={{ $json.total_price }}"
+      },
+      "credentials": {
+        "slackApi": { "id": "cred-005", "name": "Slack Workspace" }
+      }
+    }
+  ],
+  "connections": {
+    "Shopify Trigger": {
+      "main": [[{ "node": "Filter High Value", "type": "main", "index": 0 }]]
+    },
+    "Filter High Value": {
+      "main": [[{ "node": "Post to Slack", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" }
+}

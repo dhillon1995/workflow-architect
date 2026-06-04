@@ -1,0 +1,45 @@
+{
+  "name": "Sheet Logger",
+  "nodes": [
+    {
+      "id": "c1b2c3d4-0000-0000-0000-000000000001",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sheet-logger"
+      },
+      "webhookId": "def-456"
+    },
+    {
+      "id": "c1b2c3d4-0000-0000-0000-000000000002",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "parameters": {
+        "operation": "append",
+        "spreadsheetId": "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms",
+        "range": "Sheet1!A:D",
+        "valueInputMode": "RAW",
+        "values": {
+          "values": [
+            ["={{ $json.body.name }}", "={{ $json.body.email }}", "={{ $json.body.message }}", "={{ new Date().toISOString() }}"]
+          ]
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "cred-002", "name": "Google Sheets OAuth2" }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{ "node": "Google Sheets", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" }
+}

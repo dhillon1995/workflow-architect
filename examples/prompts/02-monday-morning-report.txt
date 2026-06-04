@@ -1,0 +1,1 @@
+Every Monday at 9am, fetch all open deals from HubSpot, summarize them with Claude, and send the summary to the #sales channel in Slack.
