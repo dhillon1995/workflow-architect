@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, Eye, Bug, ExternalLink, Workflow, MoveRight } from 'lucide-react';
+import { ArrowRight, Zap, Eye, Bug, ExternalLink, MoveRight } from 'lucide-react';
 
 function FadeIn({
   children,
@@ -171,7 +171,7 @@ function AppPreviewCard({ delay = 0 }: { delay?: number }) {
               style={{
                 width: '24px',
                 height: '24px',
-                background: 'var(--accent-lavender)',
+                background: '#ff5e1a',
                 border: '1px solid var(--glass-border)',
                 borderRadius: '6px',
                 display: 'flex',
@@ -179,7 +179,7 @@ function AppPreviewCard({ delay = 0 }: { delay?: number }) {
                 justifyContent: 'center',
               }}
             >
-              <Workflow size={12} style={{ color: 'var(--tint-lavender)' }} />
+              <span style={{ color: '#000000', fontFamily: 'var(--font-sans)', fontSize: '14px', fontWeight: 700, lineHeight: 1 }}>W</span>
             </div>
             <span
               style={{
@@ -326,7 +326,7 @@ export default function Landing() {
             style={{
               width: '28px',
               height: '28px',
-              background: 'var(--accent-lavender)',
+              background: '#ff5e1a',
               border: '1px solid var(--glass-border)',
               borderTopColor: 'var(--glass-border-bright)',
               borderRadius: 'var(--radius-sm)',
@@ -336,7 +336,7 @@ export default function Landing() {
               boxShadow: 'var(--shadow-inset-top)',
             }}
           >
-            <Workflow size={14} style={{ color: 'var(--tint-lavender)' }} />
+            <span style={{ color: '#000000', fontFamily: 'var(--font-sans)', fontSize: '16px', fontWeight: 700, lineHeight: 1 }}>W</span>
           </div>
           <span
             style={{

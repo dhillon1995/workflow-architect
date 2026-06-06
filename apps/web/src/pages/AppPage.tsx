@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { ReactFlowProvider } from '@xyflow/react';
-import { Link, Workflow, Zap, Eye, Bug, Sun, Moon } from 'lucide-react';
+import { Link, Zap, Eye, Bug, Sun, Moon } from 'lucide-react';
 import WorkflowCanvas from '../components/canvas/WorkflowCanvas.js';
 import LeftRail from '../components/layout/LeftRail.js';
 import RightRail from '../components/layout/RightRail.js';
@@ -173,7 +173,7 @@ export default function AppPage() {
               boxShadow: 'var(--shadow-inset-top), 0 4px 12px rgba(255, 94, 26, 0.25)',
             }}
           >
-            <Workflow size={15} style={{ color: '#ffffff' }} />
+            <span style={{ color: '#000000', fontFamily: 'var(--font-sans)', fontSize: '18px', fontWeight: 700, lineHeight: 1 }}>W</span>
           </div>
           <span
             style={{
