@@ -226,87 +226,12 @@ export default function LeftRail({
           </div>
         ) : (
           history.map((entry) => (
-            <div
+            <HistoryItem
               key={entry.id}
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '4px',
-                padding: '6px',
-                borderRadius: 'var(--radius-sm)',
-                cursor: 'pointer',
-                transition: 'background 0.12s',
-                marginBottom: '2px',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.background = 'var(--glass-floating)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.background = 'transparent';
-              }}
-            >
-              <button
-                onClick={() => onHistorySelect(entry)}
-                style={{
-                  flex: 1,
-                  background: 'none',
-                  border: 'none',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  padding: 0,
-                  minWidth: 0,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    color: 'var(--text)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    marginBottom: '2px',
-                    letterSpacing: '-0.01em',
-                  }}
-                >
-                  {entry.workflowName}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-faint)' }}>
-                  <Clock size={9} />
-                  <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px' }}>
-                    {new Date(entry.timestamp).toLocaleDateString()}
-                  </span>
-                </div>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onHistoryDelete(entry.id);
-                }}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'var(--text-faint)',
-                  padding: '2px',
-                  flexShrink: 0,
-                  opacity: 0,
-                  transition: 'opacity 0.12s',
-                  borderRadius: 'var(--radius-xs)',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.opacity = '1';
-                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-danger)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.opacity = '0';
-                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-faint)';
-                }}
-              >
-                <Trash2 size={11} />
-              </button>
-            </div>
+              entry={entry}
+              onSelect={onHistorySelect}
+              onDelete={onHistoryDelete}
+            />
           ))
         )}
       </div>
@@ -390,6 +315,96 @@ export default function LeftRail({
           </span>
         </div>
       )}
+    </div>
+  );
+}
+
+interface HistoryItemProps {
+  entry: HistoryEntry;
+  onSelect: (entry: HistoryEntry) => void;
+  onDelete: (id: string) => void;
+}
+
+function HistoryItem({ entry, onSelect, onDelete }: HistoryItemProps) {
+  const [rowHovered, setRowHovered] = useState(false);
+  const [deleteHovered, setDeleteHovered] = useState(false);
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '4px',
+        padding: '6px',
+        borderRadius: 'var(--radius-sm)',
+        cursor: 'pointer',
+        transition: 'background 0.12s',
+        marginBottom: '2px',
+        background: rowHovered ? 'var(--glass-floating)' : 'transparent',
+      }}
+      onMouseEnter={() => setRowHovered(true)}
+      onMouseLeave={() => {
+        setRowHovered(false);
+        setDeleteHovered(false);
+      }}
+    >
+      <button
+        onClick={() => onSelect(entry)}
+        style={{
+          flex: 1,
+          background: 'none',
+          border: 'none',
+          textAlign: 'left',
+          cursor: 'pointer',
+          padding: 0,
+          minWidth: 0,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: '12px',
+            fontWeight: 500,
+            color: 'var(--text)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            marginBottom: '2px',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          {entry.workflowName}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-faint)' }}>
+          <Clock size={9} />
+          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px' }}>
+            {new Date(entry.timestamp).toLocaleDateString()}
+          </span>
+        </div>
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(entry.id);
+        }}
+        title="Delete workflow"
+        aria-label={`Delete ${entry.workflowName}`}
+        onMouseEnter={() => setDeleteHovered(true)}
+        onMouseLeave={() => setDeleteHovered(false)}
+        style={{
+          background: deleteHovered ? 'rgba(248, 113, 113, 0.12)' : 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: deleteHovered ? 'var(--color-danger)' : 'var(--text-faint)',
+          padding: '2px',
+          flexShrink: 0,
+          opacity: rowHovered ? 1 : 0,
+          transition: 'opacity 0.12s, color 0.12s, background 0.12s',
+          borderRadius: 'var(--radius-xs)',
+        }}
+      >
+        <Trash2 size={11} />
+      </button>
     </div>
   );
 }

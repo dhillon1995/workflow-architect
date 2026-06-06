@@ -110,6 +110,18 @@ export default function AppPage() {
     [],
   );
 
+  const handleHistoryDelete = useCallback(
+    (id: string) => {
+      const deleted = history.find((e) => e.id === id);
+      removeEntry(id);
+      // If the deleted workflow is the one on the canvas, clear it.
+      if (deleted && deleted.workflow === workflow) {
+        setWorkflow(null);
+      }
+    },
+    [history, removeEntry, workflow],
+  );
+
   async function handleCopyJson() {
     if (workflow) await navigator.clipboard.writeText(JSON.stringify(workflow, null, 2));
   }
@@ -348,7 +360,7 @@ export default function AppPage() {
         <LeftRail
           history={history}
           onHistorySelect={handleHistorySelect}
-          onHistoryDelete={removeEntry}
+          onHistoryDelete={handleHistoryDelete}
           onNewWorkflow={handleNewWorkflow}
         />
 

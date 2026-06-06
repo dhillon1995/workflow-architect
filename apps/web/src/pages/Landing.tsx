@@ -139,6 +139,159 @@ function WorkflowMock() {
   );
 }
 
+function AppPreviewCard({ delay = 0 }: { delay?: number }) {
+  return (
+    <FadeIn delay={delay}>
+      <div
+        style={{
+          background: 'var(--glass-floating)',
+          backdropFilter: 'var(--glass-blur-floating)',
+          WebkitBackdropFilter: 'var(--glass-blur-floating)',
+          border: '1px solid var(--glass-border)',
+          borderTopColor: 'var(--glass-border-bright)',
+          borderRadius: 'var(--radius-xl)',
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-inset-top), var(--shadow-lift)',
+        }}
+      >
+        {/* Mock top bar */}
+        <div
+          style={{
+            height: '44px',
+            borderBottom: '1px solid var(--glass-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 16px',
+            background: 'var(--glass-surface)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                background: 'var(--accent-lavender)',
+                border: '1px solid var(--glass-border)',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Workflow size={12} style={{ color: 'var(--tint-lavender)' }} />
+            </div>
+            <span
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '12px',
+                fontWeight: 700,
+                color: 'var(--text)',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Workflow Architect
+            </span>
+          </div>
+          {/* Mock pill tabs */}
+          <div
+            style={{
+              display: 'flex',
+              background: 'var(--glass-elevated)',
+              border: '1px solid var(--glass-border)',
+              borderRadius: '100px',
+              padding: '2px',
+              gap: '2px',
+            }}
+          >
+            {['Generate', 'Visualize', 'Debug'].map((tab, i) => (
+              <div
+                key={tab}
+                style={{
+                  padding: '3px 10px',
+                  borderRadius: '100px',
+                  background: i === 0 ? 'var(--glass-floating)' : 'transparent',
+                  border: i === 0 ? '1px solid var(--glass-border-bright)' : '1px solid transparent',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '10px',
+                  fontWeight: i === 0 ? 600 : 400,
+                  color: i === 0 ? 'var(--text)' : 'var(--text-faint)',
+                }}
+              >
+                {tab}
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              width: '80px',
+              height: '24px',
+              background: 'rgba(74,222,128,0.08)',
+              border: '1px solid rgba(74,222,128,0.2)',
+              borderRadius: '100px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+            }}
+          >
+            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#4ade80' }} />
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', fontWeight: 500, color: '#4ade80' }}>
+              Connected
+            </span>
+          </div>
+        </div>
+
+        {/* Mock canvas */}
+        <div
+          style={{
+            background: 'var(--base-canvas)',
+            padding: '32px 40px',
+            position: 'relative',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'radial-gradient(circle, var(--glass-border) 1px, transparent 1px)',
+              backgroundSize: '24px 24px',
+              pointerEvents: 'none',
+            }}
+          />
+          <div style={{ position: 'relative' }}>
+            <WorkflowMock />
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: 'var(--glass-surface)',
+            borderTop: '1px solid var(--glass-border)',
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
+        >
+          <div
+            style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: 'var(--tint-mint)',
+              animation: 'pulse 2s ease-in-out infinite',
+            }}
+          />
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-faint)' }}>
+            Generated "Webhook → Classify → Slack" in 4.2s
+          </span>
+        </div>
+      </div>
+    </FadeIn>
+  );
+}
+
 export default function Landing() {
   return (
     <div
@@ -200,7 +353,7 @@ export default function Landing() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <a
-            href="https://github.com/sandipdhillon"
+            href="https://github.com/dhillon1995/workflow-architect"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -250,7 +403,7 @@ export default function Landing() {
           position: 'relative',
           maxWidth: '960px',
           margin: '0 auto',
-          padding: '100px 40px 64px',
+          padding: '50px 40px 64px',
           textAlign: 'center',
           overflow: 'hidden',
         }}
@@ -301,12 +454,46 @@ export default function Landing() {
               lineHeight: 1.08,
               letterSpacing: '-0.04em',
               color: 'var(--text)',
-              marginBottom: '20px',
+              marginBottom: '36px',
             }}
           >
             Generate. Visualise.{' '}
             <span style={{ color: 'var(--tint-sky)' }}>Debug.</span>
           </h1>
+
+          {/* Demo video */}
+          <div
+            style={{
+              maxWidth: '720px',
+              margin: '0 auto 32px',
+              background: 'var(--glass-floating)',
+              backdropFilter: 'var(--glass-blur-floating)',
+              WebkitBackdropFilter: 'var(--glass-blur-floating)',
+              border: '1px solid var(--glass-border)',
+              borderTopColor: 'var(--glass-border-bright)',
+              borderRadius: 'var(--radius-xl)',
+              overflow: 'hidden',
+              boxShadow: 'var(--shadow-inset-top), var(--shadow-lift)',
+            }}
+          >
+            <video
+              src="/projects/workflowarchitect/demo.mp4"
+              autoPlay
+              loop
+              muted
+              controls
+              playsInline
+              preload="auto"
+              style={{
+                display: 'block',
+                width: '100%',
+                height: 'auto',
+                background: 'var(--base-canvas)',
+              }}
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
 
           <p
             style={{
@@ -371,158 +558,6 @@ export default function Landing() {
             </a>
           </div>
         </motion.div>
-      </section>
-
-      {/* App preview card */}
-      <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px 80px' }}>
-        <FadeIn>
-          <div
-            style={{
-              background: 'var(--glass-floating)',
-              backdropFilter: 'var(--glass-blur-floating)',
-              WebkitBackdropFilter: 'var(--glass-blur-floating)',
-              border: '1px solid var(--glass-border)',
-              borderTopColor: 'var(--glass-border-bright)',
-              borderRadius: 'var(--radius-xl)',
-              overflow: 'hidden',
-              boxShadow: 'var(--shadow-inset-top), var(--shadow-lift)',
-            }}
-          >
-            {/* Mock top bar */}
-            <div
-              style={{
-                height: '44px',
-                borderBottom: '1px solid var(--glass-border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 16px',
-                background: 'var(--glass-surface)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    background: 'var(--accent-lavender)',
-                    border: '1px solid var(--glass-border)',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Workflow size={12} style={{ color: 'var(--tint-lavender)' }} />
-                </div>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    color: 'var(--text)',
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  Workflow Architect
-                </span>
-              </div>
-              {/* Mock pill tabs */}
-              <div
-                style={{
-                  display: 'flex',
-                  background: 'var(--glass-elevated)',
-                  border: '1px solid var(--glass-border)',
-                  borderRadius: '100px',
-                  padding: '2px',
-                  gap: '2px',
-                }}
-              >
-                {['Generate', 'Visualize', 'Debug'].map((tab, i) => (
-                  <div
-                    key={tab}
-                    style={{
-                      padding: '3px 10px',
-                      borderRadius: '100px',
-                      background: i === 0 ? 'var(--glass-floating)' : 'transparent',
-                      border: i === 0 ? '1px solid var(--glass-border-bright)' : '1px solid transparent',
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '10px',
-                      fontWeight: i === 0 ? 600 : 400,
-                      color: i === 0 ? 'var(--text)' : 'var(--text-faint)',
-                    }}
-                  >
-                    {tab}
-                  </div>
-                ))}
-              </div>
-              <div
-                style={{
-                  width: '80px',
-                  height: '24px',
-                  background: 'rgba(74,222,128,0.08)',
-                  border: '1px solid rgba(74,222,128,0.2)',
-                  borderRadius: '100px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                }}
-              >
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#4ade80' }} />
-                <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', fontWeight: 500, color: '#4ade80' }}>
-                  Connected
-                </span>
-              </div>
-            </div>
-
-            {/* Mock canvas */}
-            <div
-              style={{
-                background: 'var(--base-canvas)',
-                padding: '32px 40px',
-                position: 'relative',
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  backgroundImage: 'radial-gradient(circle, var(--glass-border) 1px, transparent 1px)',
-                  backgroundSize: '24px 24px',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div style={{ position: 'relative' }}>
-                <WorkflowMock />
-              </div>
-            </div>
-
-            <div
-              style={{
-                background: 'var(--glass-surface)',
-                borderTop: '1px solid var(--glass-border)',
-                padding: '10px 16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
-              <div
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  background: 'var(--tint-mint)',
-                  animation: 'pulse 2s ease-in-out infinite',
-                }}
-              />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-faint)' }}>
-                Generated "Webhook → Classify → Slack" in 4.2s
-              </span>
-            </div>
-          </div>
-        </FadeIn>
       </section>
 
       {/* Three modes */}
@@ -756,6 +791,11 @@ export default function Landing() {
             ))}
           </div>
         </FadeIn>
+
+        {/* Example generated output */}
+        <div style={{ marginTop: '32px' }}>
+          <AppPreviewCard delay={0.4} />
+        </div>
       </section>
 
       {/* CTA */}
