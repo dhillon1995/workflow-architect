@@ -13,14 +13,16 @@ const CustomNode = memo(function CustomNode({
   return (
     <motion.div
       className={`wf-node ${categoryClass}${selected ? ' selected' : ''}`}
-      initial={{ opacity: 0, y: 6, scale: 0.97 }}
+      initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{
         delay: data.animationDelay,
-        duration: 0.28,
+        duration: 0.32,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
     >
+      <span className="wf-node__cat">{data.nodeCategory}</span>
+
       <Handle
         type="target"
         position={Position.Left}

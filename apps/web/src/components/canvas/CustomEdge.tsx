@@ -23,23 +23,17 @@ const CustomEdge = memo(function CustomEdge({
   const [flowVisible, setFlowVisible] = useState(false);
 
   useEffect(() => {
-    // Reveal the animated flow layer shortly after mount
-    const t = setTimeout(() => setFlowVisible(true), 600);
+    // Reveal the animated flow layer once the node draw-in settles
+    const t = setTimeout(() => setFlowVisible(true), 700);
     return () => clearTimeout(t);
   }, []);
 
   return (
     <g id={id}>
-      {/* Base dashed line */}
-      <path
-        d={edgePath}
-        className={`wf-edge${selected ? ' active' : ''}`}
-      />
+      {/* Base drafting line */}
+      <path d={edgePath} className={`wf-edge${selected ? ' active' : ''}`} />
       {/* Animated flow overlay */}
-      <path
-        d={edgePath}
-        className={`wf-edge-flow${flowVisible ? ' visible' : ''}`}
-      />
+      <path d={edgePath} className={`wf-edge-flow${flowVisible ? ' visible' : ''}`} />
     </g>
   );
 });

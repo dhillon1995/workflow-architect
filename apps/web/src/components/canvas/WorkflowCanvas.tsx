@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Background,
@@ -22,9 +22,10 @@ const edgeTypes = { workflowEdge: CustomEdge };
 interface WorkflowCanvasProps {
   workflow: Record<string, unknown> | null;
   onNodeClick?: (nodeId: string) => void;
+  onExample?: (prompt: string) => void;
 }
 
-function CanvasInner({ workflow, onNodeClick }: WorkflowCanvasProps) {
+function CanvasInner({ workflow, onNodeClick, onExample }: WorkflowCanvasProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { fitView } = useReactFlow();
@@ -68,26 +69,27 @@ function CanvasInner({ workflow, onNodeClick }: WorkflowCanvasProps) {
         nodesConnectable={false}
         deleteKeyCode={null}
         proOptions={{ hideAttribution: true }}
-        style={{ background: 'var(--color-bg)' }}
+        style={{ background: 'var(--paper-deep)' }}
       >
         <Background
-          variant={BackgroundVariant.Dots}
-          gap={24}
-          size={1}
-          color="var(--color-border)"
+          variant={BackgroundVariant.Lines}
+          gap={70}
+          color="var(--grid-major)"
+          id="major"
         />
-        <Controls
-          position="bottom-left"
-          showInteractive={false}
+        <Background
+          variant={BackgroundVariant.Lines}
+          gap={14}
+          color="var(--grid-minor)"
+          id="minor"
         />
+        <Controls position="bottom-left" showInteractive={false} />
       </ReactFlow>
-      {isEmpty && <EmptyState />}
+      {isEmpty && <EmptyState onExample={onExample} />}
     </div>
   );
 }
 
 export default function WorkflowCanvas(props: WorkflowCanvasProps) {
-  return (
-    <CanvasInner {...props} />
-  );
+  return <CanvasInner {...props} />;
 }

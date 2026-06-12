@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { Play, AlertCircle } from 'lucide-react';
+import { defineBlueprintThemes, currentEditorTheme, EDITOR_OPTIONS } from '../../lib/monaco-theme.js';
 
 interface JsonPasteInputProps {
   onVisualize: (workflow: Record<string, unknown>) => void;
@@ -25,46 +26,18 @@ export default function JsonPasteInput({ onVisualize }: JsonPasteInputProps) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', height: '100%' }}>
-      <div
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '11px',
-          color: 'var(--color-text-muted)',
-          marginBottom: '2px',
-        }}
-      >
-        Paste n8n workflow JSON
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '100%' }}>
+      <span className="bp-label">Existing drawing — n8n workflow JSON</span>
 
-      <div
-        style={{
-          flex: 1,
-          minHeight: '200px',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-md)',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="monaco-surface" style={{ flex: 1, minHeight: '220px' }}>
         <Editor
           height="100%"
           defaultLanguage="json"
           value={value}
           onChange={(v) => setValue(v ?? '')}
-          theme="vs-dark"
-          options={{
-            fontSize: 12,
-            fontFamily: '"IBM Plex Mono", "Cascadia Code", monospace',
-            minimap: { enabled: false },
-            lineNumbers: 'on',
-            scrollBeyondLastLine: false,
-            wordWrap: 'on',
-            padding: { top: 8, bottom: 8 },
-            renderLineHighlight: 'none',
-            overviewRulerLanes: 0,
-            hideCursorInOverviewRuler: true,
-            scrollbar: { useShadows: false, verticalScrollbarSize: 6 },
-          }}
+          theme={currentEditorTheme()}
+          beforeMount={defineBlueprintThemes}
+          options={EDITOR_OPTIONS}
         />
       </div>
 
@@ -73,13 +46,13 @@ export default function JsonPasteInput({ onVisualize }: JsonPasteInputProps) {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '7px',
             fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            color: 'var(--color-danger)',
+            fontSize: '10px',
+            color: 'var(--danger)',
           }}
         >
-          <AlertCircle size={12} />
+          <AlertCircle size={11} style={{ flexShrink: 0 }} />
           {error}
         </div>
       )}
@@ -87,26 +60,18 @@ export default function JsonPasteInput({ onVisualize }: JsonPasteInputProps) {
       <button
         onClick={handleVisualize}
         disabled={!value.trim()}
+        className="btn-primary"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '6px',
-          background: 'var(--color-accent)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 'var(--radius-sm)',
-          padding: '8px 16px',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '12px',
-          fontWeight: 600,
-          cursor: value.trim() ? 'pointer' : 'not-allowed',
-          opacity: value.trim() ? 1 : 0.4,
-          letterSpacing: '0.03em',
+          gap: '7px',
+          padding: '9px 16px',
+          fontSize: '10px',
         }}
       >
         <Play size={12} />
-        Render workflow
+        Render schematic
       </button>
     </div>
   );

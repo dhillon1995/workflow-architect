@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Zap, Eye, Bug, Trash2, Copy, Link } from 'lucide-react';
+import Ticks from '../ui/Ticks.js';
 
 type Mode = 'generate' | 'visualize' | 'debug';
 
@@ -40,9 +41,9 @@ export default function CommandPalette({
 
   const commands: Command[] = [
     { id: 'mode-generate', label: 'Switch to Generate', icon: Zap, action: () => { onSwitchMode('generate'); onClose(); }, kbd: `${MOD}1` },
-    { id: 'mode-visualize', label: 'Switch to Visualize', icon: Eye, action: () => { onSwitchMode('visualize'); onClose(); }, kbd: `${MOD}2` },
+    { id: 'mode-visualize', label: 'Switch to Visualise', icon: Eye, action: () => { onSwitchMode('visualize'); onClose(); }, kbd: `${MOD}2` },
     { id: 'mode-debug', label: 'Switch to Debug', icon: Bug, action: () => { onSwitchMode('debug'); onClose(); }, kbd: `${MOD}3` },
-    { id: 'clear', label: 'New workflow', description: 'Clear canvas and start fresh', icon: Trash2, action: () => { onClearCanvas(); onClose(); }, kbd: `${MOD}N` },
+    { id: 'clear', label: 'New sheet', description: 'Clear canvas and start fresh', icon: Trash2, action: () => { onClearCanvas(); onClose(); }, kbd: `${MOD}N` },
     { id: 'copy', label: 'Copy workflow JSON', description: 'Copy current workflow to clipboard', icon: Copy, action: () => { onCopyJson(); onClose(); } },
     { id: 'connect', label: 'Connect n8n instance', description: 'Deploy directly to n8n', icon: Link, action: () => { onOpenConnect(); onClose(); } },
   ];
@@ -90,7 +91,13 @@ export default function CommandPalette({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 60, backdropFilter: 'blur(4px)' }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'color-mix(in srgb, var(--paper-deep) 70%, transparent)',
+              zIndex: 60,
+              backdropFilter: 'blur(3px)',
+            }}
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.97, y: -8 }}
@@ -99,33 +106,29 @@ export default function CommandPalette({
             transition={{ duration: 0.15 }}
             style={{
               position: 'fixed',
-              top: '20vh',
+              top: '18vh',
               left: '50%',
               transform: 'translateX(-50%)',
               width: '480px',
               maxWidth: 'calc(100vw - 32px)',
-              background: 'var(--glass-elevated)',
-              backdropFilter: 'var(--glass-blur-elevated)',
-              WebkitBackdropFilter: 'var(--glass-blur-elevated)',
-              border: '1px solid var(--glass-border)',
-              borderTopColor: 'var(--glass-border-bright)',
-              borderRadius: 'var(--radius-lg)',
-              boxShadow: 'var(--shadow-inset-top), var(--shadow-lift)',
+              background: 'var(--paper)',
+              border: '1px solid var(--line-strong)',
+              boxShadow: 'var(--shadow-lift)',
               zIndex: 70,
-              overflow: 'hidden',
             }}
           >
+            <Ticks color="var(--accent-line)" />
             {/* Search input */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                padding: '12px 16px',
-                borderBottom: '1px solid var(--glass-border)',
+                padding: '13px 16px',
+                borderBottom: '1px solid var(--line)',
               }}
             >
-              <Search size={14} style={{ color: 'var(--text-faint)', flexShrink: 0 }} />
+              <Search size={13} style={{ color: 'var(--accent)', flexShrink: 0 }} />
               <input
                 ref={inputRef}
                 value={query}
@@ -138,23 +141,25 @@ export default function CommandPalette({
                   border: 'none',
                   outline: 'none',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '13px',
-                  color: 'var(--text)',
+                  fontSize: '11px',
+                  color: 'var(--ink)',
                 }}
               />
               <kbd>Esc</kbd>
             </div>
 
             {/* Command list */}
-            <div style={{ maxHeight: '280px', overflow: 'auto', padding: '4px' }}>
+            <div style={{ maxHeight: '280px', overflow: 'auto', padding: '5px' }}>
               {filtered.length === 0 ? (
                 <div
                   style={{
                     padding: '20px',
                     textAlign: 'center',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '12px',
-                    color: 'var(--text-faint)',
+                    fontSize: '10px',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    color: 'var(--ink-faint)',
                   }}
                 >
                   No commands match
@@ -162,6 +167,7 @@ export default function CommandPalette({
               ) : (
                 filtered.map((cmd, i) => {
                   const Icon = cmd.icon;
+                  const active = i === selectedIndex;
                   return (
                     <button
                       key={cmd.id}
@@ -170,23 +176,23 @@ export default function CommandPalette({
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '10px',
+                        gap: '11px',
                         width: '100%',
                         padding: '9px 12px',
-                        background: i === selectedIndex ? 'var(--glass-floating)' : 'transparent',
+                        background: active ? 'var(--accent-dim)' : 'transparent',
                         border: 'none',
-                        borderRadius: 'var(--radius-sm)',
+                        borderLeft: active ? '2px solid var(--accent)' : '2px solid transparent',
                         cursor: 'pointer',
                         textAlign: 'left',
-                        transition: 'background 0.1s',
+                        transition: 'background 0.1s, border-color 0.1s',
                       }}
                     >
-                      <Icon size={13} style={{ color: 'var(--text-faint)', flexShrink: 0 }} />
-                      <span style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text)' }}>
+                      <Icon size={12} style={{ color: active ? 'var(--accent)' : 'var(--ink-faint)', flexShrink: 0 }} />
+                      <span style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: 'var(--ink)' }}>
                         {cmd.label}
                       </span>
                       {cmd.description && (
-                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--text-faint)' }}>
+                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10.5px', color: 'var(--ink-faint)' }}>
                           {cmd.description}
                         </span>
                       )}

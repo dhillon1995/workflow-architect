@@ -10,30 +10,31 @@ interface DiffViewProps {
   canDeploy?: boolean;
 }
 
+/* Both themes resolve through CSS variables, so the diff follows the toggle. */
 const diffStyles = {
   variables: {
     dark: {
-      diffViewerBackground: 'var(--color-surface)',
-      diffViewerColor: '#e8eaed',
-      addedBackground: 'rgba(167, 139, 250, 0.07)',
-      addedColor: '#c4b5fd',
-      removedBackground: 'rgba(248, 113, 113, 0.06)',
-      removedColor: '#f87171',
-      wordAddedBackground: 'rgba(167, 139, 250, 0.2)',
-      wordRemovedBackground: 'rgba(248, 113, 113, 0.18)',
-      addedGutterBackground: 'rgba(167, 139, 250, 0.09)',
-      removedGutterBackground: 'rgba(248, 113, 113, 0.08)',
-      gutterBackground: 'var(--color-surface-2)',
-      gutterColor: '#4b5260',
-      codeFoldBackground: 'var(--color-surface)',
-      codeFoldGutterBackground: 'var(--color-surface-2)',
-      codeFoldContentColor: '#4b5260',
-      emptyLineBackground: 'var(--color-bg)',
+      diffViewerBackground: 'var(--editor-bg)',
+      diffViewerColor: 'var(--ink)',
+      addedBackground: 'var(--success-dim)',
+      addedColor: 'var(--success)',
+      removedBackground: 'var(--danger-dim)',
+      removedColor: 'var(--danger)',
+      wordAddedBackground: 'rgba(95, 214, 162, 0.28)',
+      wordRemovedBackground: 'rgba(255, 122, 107, 0.26)',
+      addedGutterBackground: 'var(--success-dim)',
+      removedGutterBackground: 'var(--danger-dim)',
+      gutterBackground: 'var(--panel)',
+      gutterColor: 'var(--ink-faint)',
+      codeFoldBackground: 'var(--panel)',
+      codeFoldGutterBackground: 'var(--panel)',
+      codeFoldContentColor: 'var(--ink-faint)',
+      emptyLineBackground: 'var(--paper-deep)',
     },
   },
   line: {
-    fontFamily: '"IBM Plex Mono", "Cascadia Code", monospace',
-    fontSize: '11px',
+    fontFamily: '"Martian Mono", "IBM Plex Mono", monospace',
+    fontSize: '9.5px',
   },
 };
 
@@ -59,85 +60,58 @@ export default function DiffView({ original, fixed, onApply, onDeploy, canDeploy
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '100%' }}>
       {/* Action bar */}
-      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexShrink: 0 }}>
-        <button
-          onClick={handleCopy}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            background: 'var(--color-surface-2)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-sm)',
-            padding: '6px 12px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            color: 'var(--color-text-muted)',
-            cursor: 'pointer',
-            transition: 'all 0.15s',
-          }}
-        >
-          {copied ? <Check size={11} /> : <Copy size={11} />}
-          {copied ? 'Copied!' : 'Copy fixed JSON'}
-        </button>
-
-        {canDeploy && onDeploy && (
+      <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+        <span className="bp-label">Original vs fixed</span>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={handleDeploy}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              background: deployed ? 'rgba(74, 222, 128, 0.15)' : 'var(--color-accent)',
-              color: deployed ? 'var(--color-success)' : '#fff',
-              border: deployed ? '1px solid var(--color-success)' : 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '6px 14px',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              letterSpacing: '0.03em',
-            }}
+            onClick={handleCopy}
+            className="btn-ghost"
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 10px', fontSize: '8.5px' }}
           >
-            {deployed ? (
-              <>
-                <Check size={11} />
-                Deployed!
-              </>
-            ) : (
-              <>
-                <Upload size={11} />
-                Deploy to n8n
-              </>
-            )}
+            {copied ? <Check size={10} /> : <Copy size={10} />}
+            {copied ? 'Copied' : 'Copy fixed JSON'}
           </button>
-        )}
 
-        {!canDeploy && onApply && (
-          <button
-            onClick={() => onApply(fixed)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              background: 'var(--color-accent)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              padding: '6px 14px',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              letterSpacing: '0.03em',
-            }}
-          >
-            <Check size={11} />
-            Apply fix
-          </button>
-        )}
+          {canDeploy && onDeploy && (
+            <button
+              onClick={handleDeploy}
+              className="btn-primary"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                fontSize: '8.5px',
+                ...(deployed
+                  ? { background: 'var(--success-dim)', borderColor: 'var(--success)', color: 'var(--success)' }
+                  : {}),
+              }}
+            >
+              {deployed ? (
+                <>
+                  <Check size={10} />
+                  Deployed
+                </>
+              ) : (
+                <>
+                  <Upload size={10} />
+                  Deploy to n8n
+                </>
+              )}
+            </button>
+          )}
+
+          {!canDeploy && onApply && (
+            <button
+              onClick={() => onApply(fixed)}
+              className="btn-primary"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', fontSize: '8.5px' }}
+            >
+              <Check size={10} />
+              Apply fix
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Diff */}
@@ -145,8 +119,7 @@ export default function DiffView({ original, fixed, onApply, onDeploy, canDeploy
         style={{
           flex: 1,
           overflow: 'auto',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--line)',
           minHeight: 0,
         }}
       >

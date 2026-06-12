@@ -35,13 +35,12 @@ export default function PromptInput({ onGenerate, isRunning, onSave }: PromptInp
     textareaRef.current?.focus();
   }, []);
 
-  // Auto-resize: grows with content up to the available panel height, then scrolls inside
+  // Auto-resize: grows with content up to the available panel height
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = 'auto';
-    // outerRef is flex:1 — its clientHeight = total available space for textarea + button row
-    const maxH = outerRef.current ? outerRef.current.clientHeight - 50 : 800;
+    const maxH = outerRef.current ? outerRef.current.clientHeight - 80 : 800;
     el.style.height = Math.max(100, Math.min(el.scrollHeight, maxH)) + 'px';
   }, [value]);
 
@@ -66,23 +65,15 @@ export default function PromptInput({ onGenerate, isRunning, onSave }: PromptInp
   const modLabel = isMac ? '⌘' : 'Ctrl';
 
   return (
-    <div ref={outerRef} style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minHeight: 0 }}>
+    <div ref={outerRef} style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, minHeight: 0 }}>
+      <span className="bp-label">Specification — plain English</span>
+
       <div
         style={{
           position: 'relative',
-          background: 'var(--glass-floating)',
-          backdropFilter: 'var(--glass-blur-floating)',
-          WebkitBackdropFilter: 'var(--glass-blur-floating)',
-          border: focused
-            ? '1px solid rgba(255, 94, 26, 0.50)'
-            : '1px solid var(--glass-border)',
-          borderTopColor: focused
-            ? 'rgba(255, 94, 26, 0.70)'
-            : 'var(--glass-border-bright)',
-          borderRadius: 'var(--radius-md)',
-          boxShadow: focused
-            ? 'var(--shadow-inset-top), 0 0 0 1px rgba(255,94,26,0.10), 0 0 18px rgba(255,94,26,0.10)'
-            : 'var(--shadow-inset-top)',
+          background: 'var(--paper-deep)',
+          border: focused ? '1px solid var(--accent-line)' : '1px solid var(--line)',
+          boxShadow: focused ? '0 0 0 3px var(--accent-glow)' : 'none',
           transition: 'border-color 0.18s, box-shadow 0.18s',
         }}
       >
@@ -100,10 +91,10 @@ export default function PromptInput({ onGenerate, isRunning, onSave }: PromptInp
                 left: '14px',
                 right: '14px',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '13px',
-                color: 'var(--text-faint)',
+                fontSize: '10.5px',
+                color: 'var(--ink-faint)',
                 pointerEvents: 'none',
-                lineHeight: 1.6,
+                lineHeight: 1.7,
                 cursor: 'text',
               }}
               onClick={() => textareaRef.current?.focus()}
@@ -130,18 +121,18 @@ export default function PromptInput({ onGenerate, isRunning, onSave }: PromptInp
             resize: 'none',
             padding: '12px 14px',
             fontFamily: 'var(--font-mono)',
-            fontSize: '13px',
-            color: 'var(--text)',
-            lineHeight: 1.6,
-            minHeight: '200px',
+            fontSize: '10.5px',
+            color: 'var(--ink)',
+            lineHeight: 1.7,
+            minHeight: '180px',
             overflowY: 'auto',
           }}
         />
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-faint)' }}>
-          <kbd>{modLabel}</kbd> + <kbd>Enter</kbd> to generate
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '8.5px', color: 'var(--ink-faint)', whiteSpace: 'nowrap' }}>
+          <kbd>{modLabel}</kbd> + <kbd>Enter</kbd>
         </span>
 
         <button
@@ -151,24 +142,20 @@ export default function PromptInput({ onGenerate, isRunning, onSave }: PromptInp
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            borderRadius: 'var(--radius-sm)',
-            padding: '7px 14px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
-            fontWeight: 600,
-            letterSpacing: '0.03em',
+            gap: '7px',
+            padding: '9px 16px',
+            fontSize: '10px',
           }}
         >
           {isRunning ? (
             <>
-              <Loader2 size={13} className="animate-spin" />
-              Generating…
+              <Loader2 size={12} className="animate-spin" />
+              Drafting…
             </>
           ) : (
             <>
-              Generate
-              <ArrowRight size={13} />
+              Draft workflow
+              <ArrowRight size={12} />
             </>
           )}
         </button>

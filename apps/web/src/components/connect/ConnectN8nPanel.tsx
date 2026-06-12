@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Link, Check, Loader2, AlertCircle, Unlink } from 'lucide-react';
+import { X, Link, Check, Loader2, AlertCircle, Unlink, ShieldCheck } from 'lucide-react';
 import { useN8nConnection } from '../../hooks/useN8nConnection.js';
+import Ticks from '../ui/Ticks.js';
 
 interface ConnectN8nPanelProps {
   isOpen: boolean;
@@ -22,22 +23,6 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    background: 'var(--glass-floating)',
-    backdropFilter: 'var(--glass-blur-floating)',
-    WebkitBackdropFilter: 'var(--glass-blur-floating)',
-    border: '1px solid var(--glass-border)',
-    borderTopColor: 'var(--glass-border-bright)',
-    borderRadius: 'var(--radius-sm)',
-    padding: '8px 12px',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    color: 'var(--text)',
-    outline: 'none',
-    boxShadow: 'var(--shadow-inset-top)',
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -51,8 +36,8 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(0,0,0,0.5)',
-              backdropFilter: 'blur(4px)',
+              background: 'color-mix(in srgb, var(--paper-deep) 65%, transparent)',
+              backdropFilter: 'blur(3px)',
               zIndex: 40,
             }}
           />
@@ -69,11 +54,9 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
               top: 0,
               bottom: 0,
               width: '360px',
-              background: 'var(--glass-elevated)',
-              backdropFilter: 'var(--glass-blur-elevated)',
-              WebkitBackdropFilter: 'var(--glass-blur-elevated)',
-              borderLeft: '1px solid var(--glass-border)',
-              borderLeftColor: 'var(--glass-border-bright)',
+              maxWidth: '100vw',
+              background: 'var(--paper)',
+              borderLeft: '1px solid var(--line-strong)',
               zIndex: 50,
               display: 'flex',
               flexDirection: 'column',
@@ -86,92 +69,78 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '16px 20px',
-                borderBottom: '1px solid var(--glass-border)',
-                boxShadow: 'var(--shadow-inset-top)',
+                padding: '16px 18px',
+                borderBottom: '1px solid var(--line)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Link size={14} style={{ color: 'var(--tint-mint)' }} />
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: 'var(--text)',
-                  }}
-                >
-                  Connect n8n
+              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                <Link size={13} style={{ color: 'var(--accent)' }} />
+                <span className="bp-label bp-label--bright" style={{ fontSize: '10px' }}>
+                  Connect n8n instance
                 </span>
               </div>
               <button
                 onClick={onClose}
-                style={{
-                  background: 'var(--glass-floating)',
-                  border: '1px solid var(--glass-border)',
-                  borderTopColor: 'var(--glass-border-bright)',
-                  borderRadius: 'var(--radius-xs)',
-                  cursor: 'pointer',
-                  color: 'var(--text-muted)',
-                  padding: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: 'var(--shadow-inset-top)',
-                }}
+                className="btn-ghost"
+                aria-label="Close panel"
+                style={{ padding: '5px', display: 'flex' }}
               >
-                <X size={14} />
+                <X size={13} />
               </button>
             </div>
 
-            <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ padding: '20px 18px', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {connection ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      background: 'rgba(74,222,128,0.07)',
-                      border: '1px solid rgba(74,222,128,0.22)',
-                      borderRadius: 'var(--radius-md)',
+                      gap: '9px',
+                      background: 'var(--success-dim)',
+                      border: '1px solid var(--success)',
+                      borderLeftWidth: '3px',
                       padding: '10px 14px',
                     }}
                   >
-                    <Check size={13} style={{ color: 'var(--color-success)' }} />
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--color-success)' }}>
+                    <Check size={12} style={{ color: 'var(--success)' }} />
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        color: 'var(--success)',
+                      }}
+                    >
                       Connected
                     </span>
                   </div>
                   <div
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '11px',
-                      color: 'var(--text-muted)',
+                      fontSize: '10px',
+                      color: 'var(--ink-muted)',
                       wordBreak: 'break-all',
+                      lineHeight: 1.6,
                     }}
                   >
                     {connection.baseUrl}
                   </div>
                   <button
                     onClick={disconnect}
+                    className="btn-ghost"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
-                      background: 'var(--glass-floating)',
-                      border: '1px solid var(--glass-border)',
-                      borderTopColor: 'var(--glass-border-bright)',
-                      borderRadius: 'var(--radius-sm)',
+                      gap: '7px',
                       padding: '8px 14px',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '11px',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      boxShadow: 'var(--shadow-inset-top)',
+                      fontSize: '9px',
+                      alignSelf: 'flex-start',
                     }}
                   >
-                    <Unlink size={12} />
+                    <Unlink size={11} />
                     Disconnect
                   </button>
                 </div>
@@ -181,37 +150,52 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
                     style={{
                       fontFamily: 'var(--font-sans)',
                       fontSize: '12px',
-                      color: 'var(--text-muted)',
-                      lineHeight: 1.6,
+                      color: 'var(--ink-muted)',
+                      lineHeight: 1.65,
                     }}
                   >
-                    Connect your n8n instance to deploy workflows directly. Credentials are stored in session memory only — never sent to this server.
+                    Connect your n8n instance to deploy drafted workflows in one click.
                   </p>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                        n8n Base URL
-                      </span>
+                  {/* Security note */}
+                  <div
+                    style={{
+                      position: 'relative',
+                      border: '1px dashed var(--accent-line)',
+                      padding: '10px 12px',
+                      display: 'flex',
+                      gap: '10px',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <Ticks color="var(--accent-line)" size={5} />
+                    <ShieldCheck size={13} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: '1px' }} />
+                    <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--ink-muted)', lineHeight: 1.6 }}>
+                      Credentials are held in this browser tab only — your browser calls n8n
+                      directly. Nothing is ever sent to this server.
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                      <span className="bp-label" style={{ fontSize: '8px' }}>n8n base URL</span>
                       <input
                         type="url"
                         value={baseUrl}
                         onChange={(e) => setBaseUrl(e.target.value)}
-                        placeholder="https://your-n8n-instance.com"
-                        style={inputStyle}
+                        placeholder="https://your-instance.app.n8n.cloud"
+                        className="bp-input"
                       />
                     </label>
 
-                    <label style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                        API Key
-                      </span>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                      <span className="bp-label" style={{ fontSize: '8px' }}>API key</span>
                       <input
                         type="password"
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
                         placeholder="n8n_api_…"
-                        style={inputStyle}
+                        className="bp-input"
                       />
                     </label>
                   </div>
@@ -221,13 +205,13 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
+                        gap: '7px',
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '11px',
-                        color: 'var(--color-danger)',
+                        fontSize: '10px',
+                        color: 'var(--danger)',
                       }}
                     >
-                      <AlertCircle size={12} />
+                      <AlertCircle size={11} style={{ flexShrink: 0 }} />
                       {testError}
                     </div>
                   )}
@@ -235,25 +219,14 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
                   <button
                     onClick={handleConnect}
                     disabled={!baseUrl.trim() || !apiKey.trim() || testing}
+                    className="btn-primary"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px',
-                      background: 'var(--glass-floating)',
-                      backdropFilter: 'var(--glass-blur-floating)',
-                      color: 'var(--text)',
-                      border: '1px solid var(--glass-border)',
-                      borderTopColor: 'var(--glass-border-bright)',
-                      borderRadius: 'var(--radius-sm)',
-                      padding: '9px 16px',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      cursor: testing ? 'not-allowed' : 'pointer',
-                      opacity: !baseUrl.trim() || !apiKey.trim() ? 0.5 : 1,
-                      letterSpacing: '0.03em',
-                      boxShadow: 'var(--shadow-inset-top), var(--shadow-rest)',
+                      gap: '7px',
+                      padding: '10px 16px',
+                      fontSize: '10px',
                     }}
                   >
                     {testing ? (
@@ -264,12 +237,19 @@ export default function ConnectN8nPanel({ isOpen, onClose }: ConnectN8nPanelProp
                     ) : (
                       <>
                         <Link size={12} />
-                        Connect
+                        Test &amp; connect
                       </>
                     )}
                   </button>
                 </>
               )}
+            </div>
+
+            {/* Footer note */}
+            <div style={{ padding: '12px 18px', borderTop: '1px solid var(--line)' }}>
+              <span className="bp-label" style={{ fontSize: '7.5px' }}>
+                n8n cloud → settings → n8n API → create key
+              </span>
             </div>
           </motion.div>
         </>

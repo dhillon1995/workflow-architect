@@ -57,13 +57,16 @@ workflow-architect/            ← monorepo root (npm workspaces)
           Landing.tsx          ← Landing page
           AppPage.tsx          ← Main app orchestrator (keyboard shortcuts, state)
         components/
-          canvas/              ← WorkflowCanvas, CustomNode, CustomEdge, EmptyState
-          layout/              ← LeftRail (history), RightRail (mode panels)
+          canvas/              ← WorkflowCanvas, CustomNode, CustomEdge, EmptyState (example chips)
+          landing/             ← HeroSchematic (self-drafting blueprint animation)
+          layout/              ← LeftRail (drawing register/history), RightRail (mode panels)
           generate/            ← PromptInput (ghost text, ⌘↵)
           visualize/           ← JsonPasteInput
           debug/               ← DebugInputs, DiagnosisPanel, DiffView
           connect/             ← ConnectN8nPanel (sessionStorage only)
           command-palette/     ← CommandPalette (⌘K)
+          onboarding/          ← FirstRunHints (first-visit drafting notes, localStorage wa:onboarded)
+          ui/                  ← Ticks (registration-mark corners)
         hooks/
           useGenerate.ts       ← SSE stream → workflow state
           useDebug.ts          ← SSE stream → diagnosis state
@@ -73,9 +76,10 @@ workflow-architect/            ← monorepo root (npm workspaces)
           api.ts               ← SSE stream parsers (generateWorkflow, debugWorkflow)
           parse-workflow.ts    ← n8n JSON → ReactFlow nodes/edges + animation depths
           keyboard.ts          ← registerShortcut()
+          monaco-theme.ts      ← cyanotype/vellum Monaco themes + syncEditorTheme()
         styles/
-          globals.css          ← @theme tokens, ReactFlow overrides, .wf-node styles
-      index.html               ← Google Fonts: Plus Jakarta Sans + IBM Plex Mono
+          globals.css          ← theme tokens (dark + light), ReactFlow overrides, .wf-node, .bp-* utilities
+      index.html               ← Google Fonts: Big Shoulders Display + Archivo + Martian Mono
       vite.config.ts
   ecosystem.config.js          ← PM2 config (port 3001)
   nginx.conf.example           ← Location blocks for sandipdhillon.co.uk
@@ -95,46 +99,45 @@ workflow-architect/            ← monorepo root (npm workspaces)
 | Backend | Node 22, Express 4 |
 | AI | Anthropic SDK (`claude-sonnet-4-6`) |
 | Validation | Zod 3 |
-| Fonts | Plus Jakarta Sans, IBM Plex Mono (Google Fonts) |
+| Fonts | Big Shoulders Display (display), Archivo (body), Martian Mono (annotations/code) |
 
 ---
 
 ## Design system
 
-Design direction: **warm navy-slate + soft violet**. Visually distinct from the portfolio (which uses near-black + electric cyan).
+Design direction: **"Drafting Set"** — the whole UI is an architect's drawing.
+Sharp corners (radius 1–4px, no pills), hairline rules, registration-mark corner ticks
+(`<Ticks/>`), graph-paper grids (`.sheet-grid`), uppercase mono annotation labels
+(`.bp-label`). Dual theme:
 
-### CSS variables (`globals.css` `@theme` block)
+- **Dark (default) — "Cyanotype"**: deep Prussian-blue paper, pale drafting-line ink, amber accent
+- **Light — "Vellum"**: warm drafting paper, graphite ink, engineering-blue accent
+
+### CSS variables (`globals.css` — dark values shown; `[data-theme="light"]` overrides all)
 
 ```
---color-bg:          #0f1117   (page background)
---color-canvas:      #0c0f18   (ReactFlow canvas)
---color-surface:     #161c2a   (panels, rails, nav)
---color-surface-2:   #1d2438   (cards, elevated elements)
---color-surface-3:   #252d46   (hover states)
---color-surface-4:   #2e3754   (very elevated)
---color-border:      #1e2740   (structural borders)
---color-border-2:    #2c3858   (interactive borders)
---color-text:        #e2e6f3
---color-text-muted:  #7a88ab
---color-text-faint:  #454f6a
---color-accent:      #a78bfa   (soft violet — primary accent)
---color-accent-2:    #c4b5fd   (lighter violet)
---color-accent-dim:  rgba(167,139,250,0.1)
---color-accent-glow: rgba(167,139,250,0.28)
---color-danger:      #f87171
---color-warning:     #fbbf24
---color-success:     #34d399
---shadow-sm/md/lg    (layered box shadows — no flat borders)
---radius-sm: 8px  --radius-md: 12px  --radius-lg: 18px  --radius-pill: 9999px
---font-sans: "Plus Jakarta Sans"
---font-mono: "IBM Plex Mono"
+--paper:      #081427   (page background)        --paper-deep: #050d1c (canvas, inputs)
+--panel:      #0b1b35   (rails, cards)           --panel-2/3   (elevated/hover)
+--line:       rgba(148,182,238,0.16) (hairlines) --line-strong (borders)
+--grid-minor/--grid-major  (graph-paper grid colours)
+--ink: #d9e6ff  --ink-muted: #8aa3cf  --ink-faint: #44608f
+--accent: #ffc14d (drafting amber)  --accent-ink: #271a00 (text on accent)
+--accent-dim/--accent-line/--accent-glow
+--danger / --warning / --success (+ -dim variants)
+--tint-trigger / --tint-transform / --tint-action / --tint-integration (+ --dim-* washes)
+--editor-bg  (Monaco background)
+--font-display: "Big Shoulders Display"  --font-sans: "Archivo"  --font-mono: "Martian Mono"
 ```
 
 ### UI patterns
-- Mode switching is in the **top bar** as horizontal pill tabs, not the left rail
-- Left rail is **history-only** (no mode switching)
-- Buttons with accent background use `color: #fff` (NOT `#0a0b0d` — violet is darker than the old cyan)
-- Workflow node cards use `box-shadow` for elevation + `transform: translateY(-1px)` on hover
+- Mode switching is in the **top bar** as segmented technical tabs (`01 GENERATE …`), not the left rail
+- Left rail is the **drawing register** (history only); entries numbered `WA-001`-style
+- Primary CTA = `.btn-primary` (amber, uppercase mono); secondary = `.btn-ghost`
+- Headings use `--font-display`, uppercase; annotations use `.bp-label`
+- Workflow node cards: category spine on left edge + floating category tag (`.wf-node__cat`)
+- Monaco uses custom `cyanotype`/`vellum` themes (`lib/monaco-theme.ts`); call `syncEditorTheme()` after theme toggles (AppPage does this)
+- Theme persisted in localStorage `wa-theme`; `main.tsx` applies it before first paint so the landing honours it too
+- First-run hints: `FirstRunHints` shows two drafting notes; dismissed on first generate/visualise/diagnose or ✕, persisted in localStorage `wa:onboarded`
 - All motion via Framer Motion; node stagger delay = `depth * 0.12s`
 
 ---

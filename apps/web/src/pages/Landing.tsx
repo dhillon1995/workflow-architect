@@ -1,12 +1,16 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, Eye, Bug, ExternalLink, MoveRight } from 'lucide-react';
+import { ArrowRight, Github, ShieldAlert } from 'lucide-react';
+import HeroSchematic from '../components/landing/HeroSchematic.js';
+import Ticks from '../components/ui/Ticks.js';
+
+/* ───────────────────────── helpers ───────────────────────── */
 
 function FadeIn({
   children,
   delay = 0,
-  y = 20,
+  y = 18,
 }: {
   children: React.ReactNode;
   delay?: number;
@@ -26,867 +30,895 @@ function FadeIn({
   );
 }
 
-const MODES = [
-  {
-    Icon: Zap,
-    label: 'Generate',
-    tintVar: '--tint-peach',
-    accentVar: '--accent-peach',
-    desc: 'Describe a workflow in plain English. Get valid n8n JSON with auto-positioned nodes, ready to import or deploy.',
-  },
-  {
-    Icon: Eye,
-    label: 'Visualise',
-    tintVar: '--tint-sky',
-    accentVar: '--accent-sky',
-    desc: 'Paste any n8n workflow JSON and see it as an interactive graph instantly. No setup, no account required.',
-  },
-  {
-    Icon: Bug,
-    label: 'Debug',
-    tintVar: '--tint-mint',
-    accentVar: '--accent-mint',
-    desc: 'Paste a broken workflow and its error. Get a structured diagnosis, parameter patch, and a side-by-side diff.',
-  },
-];
-
-const STEPS = [
-  {
-    n: '01',
-    title: 'Classify intent',
-    desc: 'A fast Claude call identifies the right node types from the 62-node catalog.',
-  },
-  {
-    n: '02',
-    title: 'Build IR',
-    desc: "Tool-use forces structured output — trigger, steps, dependencies. No hallucinated node types.",
-  },
-  {
-    n: '03',
-    title: 'Translate',
-    desc: 'Pure function converts the IR to valid n8n JSON. Node positions computed with dagre.',
-  },
-  {
-    n: '04',
-    title: 'Validate',
-    desc: 'Zod schema validates the full n8n workflow shape. Warnings surface missing credentials.',
-  },
-];
-
-function WorkflowMock() {
-  // All coordinates in a single SVG viewBox so lines and nodes scale together
-  const nodes = [
-    { x: 0,   y: 8,  w: 165, h: 48, label: 'GitHub Trigger',  sub: 'trigger',   dotColor: '#fb923c', dotBg: 'rgba(251,146,60,0.18)' },
-    { x: 200, y: 66, w: 155, h: 48, label: "Is Label 'bug'?",  sub: 'condition', dotColor: '#a78bfa', dotBg: 'rgba(167,139,250,0.18)' },
-    { x: 390, y: 8,  w: 175, h: 48, label: 'Create Ticket',    sub: 'linear',    dotColor: '#a78bfa', dotBg: 'rgba(167,139,250,0.18)' },
-    { x: 600, y: 66, w: 165, h: 48, label: 'Post to Slack',    sub: 'slack',     dotColor: '#a78bfa', dotBg: 'rgba(167,139,250,0.18)' },
-  ];
-
-  // right-center of source → left-center of target
-  const edges = [
-    { x1: 165, y1: 32, x2: 200, y2: 90 },
-    { x1: 355, y1: 90, x2: 390, y2: 32 },
-    { x1: 565, y1: 32, x2: 600, y2: 90 },
-  ];
-
+function SectionHead({
+  fig,
+  title,
+  note,
+}: {
+  fig: string;
+  title: string;
+  note?: string;
+}) {
   return (
-    <div style={{ width: '100%' }}>
-      <svg
-        viewBox="0 0 780 128"
-        style={{ width: '100%', height: 'auto', display: 'block' }}
-        preserveAspectRatio="xMidYMid meet"
+    <div style={{ marginBottom: '36px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+        <span className="bp-label bp-label--accent">{fig}</span>
+        <span style={{ flex: 1, height: '1px', background: 'var(--line)' }} />
+      </div>
+      <h2
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(34px, 5vw, 56px)',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.01em',
+          lineHeight: 0.95,
+          color: 'var(--ink)',
+        }}
       >
-        {edges.map((e, i) => {
-          const mx = (e.x1 + e.x2) / 2;
-          return (
-            <g key={i}>
-              <path
-                d={`M ${e.x1} ${e.y1} C ${mx} ${e.y1} ${mx} ${e.y2} ${e.x2} ${e.y2}`}
-                fill="none"
-                stroke="#fb923c"
-                strokeWidth="1.5"
-                strokeOpacity="0.65"
-              />
-              <circle cx={e.x1} cy={e.y1} r="3.5" fill="#fb923c" opacity="0.85" />
-              <circle cx={e.x2} cy={e.y2} r="3.5" fill="#fb923c" opacity="0.85" />
-            </g>
-          );
-        })}
-
-        {nodes.map((node, i) => (
-          <g key={i}>
-            <rect x={node.x} y={node.y} width={node.w} height={node.h} rx="9" ry="9"
-              fill="#1d2438" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
-            <rect x={node.x + 1} y={node.y + 1} width={node.w - 2} height="1" rx="1"
-              fill="rgba(255,255,255,0.09)" />
-            <rect x={node.x + 9} y={node.y + 10} width="28" height="28" rx="6" ry="6"
-              fill={node.dotBg} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-            <circle cx={node.x + 23} cy={node.y + 24} r="5" fill={node.dotColor} opacity="0.9" />
-            <text x={node.x + 45} y={node.y + 21}
-              fontFamily="'Plus Jakarta Sans', sans-serif" fontSize="10.5" fontWeight="600"
-              fill="#e2e6f3" letterSpacing="-0.2">
-              {node.label}
-            </text>
-            <text x={node.x + 45} y={node.y + 34}
-              fontFamily="'Plus Jakarta Sans', sans-serif" fontSize="9"
-              fill="rgba(122,136,171,0.75)">
-              {node.sub}
-            </text>
-          </g>
-        ))}
-      </svg>
+        {title}
+      </h2>
+      {note && (
+        <p
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: '14px',
+            color: 'var(--ink-muted)',
+            marginTop: '12px',
+            maxWidth: '520px',
+            lineHeight: 1.65,
+          }}
+        >
+          {note}
+        </p>
+      )}
     </div>
   );
 }
 
-function AppPreviewCard({ delay = 0 }: { delay?: number }) {
+/* ───────────────────────── data ───────────────────────── */
+
+const SHEETS = [
+  {
+    no: '01',
+    title: 'Generate',
+    kbd: '1',
+    desc: 'Describe a workflow in plain English. A two-step Claude pipeline drafts valid n8n JSON with auto-positioned nodes — ready to import or deploy.',
+    tint: 'var(--tint-trigger)',
+  },
+  {
+    no: '02',
+    title: 'Visualise',
+    kbd: '2',
+    desc: 'Paste any n8n workflow JSON and see it as an interactive schematic instantly. No setup, no account, nothing leaves your browser.',
+    tint: 'var(--tint-transform)',
+  },
+  {
+    no: '03',
+    title: 'Debug',
+    kbd: '3',
+    desc: 'Paste a broken workflow with its error message. Get a structured root-cause diagnosis, a parameter-level patch, and a side-by-side diff.',
+    tint: 'var(--tint-action)',
+    badge: 'Redline review',
+  },
+];
+
+const PIPELINE = [
+  {
+    n: '01',
+    title: 'Classify',
+    desc: 'A fast Claude call maps your intent onto the 62-node catalog. Nothing outside the catalog can be drafted.',
+  },
+  {
+    n: '02',
+    title: 'Build',
+    desc: 'Forced tool-use returns a structured intermediate representation — trigger, steps, dependencies. No free-form JSON.',
+  },
+  {
+    n: '03',
+    title: 'Translate',
+    desc: 'A pure function converts the IR to n8n JSON. Dagre computes the layout; no LLM touches the output format.',
+  },
+  {
+    n: '04',
+    title: 'Validate',
+    desc: 'Zod checks the full workflow shape and connection integrity. Missing credentials surface as warnings.',
+  },
+];
+
+const BOM = [
+  { ref: 'A', item: 'Frontend', spec: 'React 19 · TypeScript · Vite · Tailwind v4' },
+  { ref: 'B', item: 'Canvas', spec: '@xyflow/react · dagre auto-layout · Framer Motion' },
+  { ref: 'C', item: 'AI', spec: 'Claude Sonnet 4.6 — forced tool-use + prompt caching' },
+  { ref: 'D', item: 'Transport', spec: 'Server-sent events — live pipeline progress' },
+  { ref: 'E', item: 'Validation', spec: 'Zod schemas shared end-to-end (API ↔ web)' },
+  { ref: 'F', item: 'Backend', spec: 'Node 22 · Express · token-bucket rate limiting' },
+  { ref: 'G', item: 'Security', spec: 'n8n credentials live in sessionStorage only — never proxied' },
+];
+
+/* ───────────────────────── mock diagnosis card ───────────────────────── */
+
+function MockDiagnosis() {
   return (
-    <FadeIn delay={delay}>
+    <div style={{ position: 'relative', background: 'var(--panel)', border: '1px solid var(--line)' }}>
+      <Ticks />
       <div
         style={{
-          background: 'var(--glass-floating)',
-          backdropFilter: 'var(--glass-blur-floating)',
-          WebkitBackdropFilter: 'var(--glass-blur-floating)',
-          border: '1px solid var(--glass-border)',
-          borderTopColor: 'var(--glass-border-bright)',
-          borderRadius: 'var(--radius-xl)',
-          overflow: 'hidden',
-          boxShadow: 'var(--shadow-inset-top), var(--shadow-lift)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '10px 16px',
+          borderBottom: '1px solid var(--line)',
         }}
       >
-        {/* Mock top bar */}
-        <div
-          style={{
-            height: '44px',
-            borderBottom: '1px solid var(--glass-border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 16px',
-            background: 'var(--glass-surface)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div
-              style={{
-                width: '24px',
-                height: '24px',
-                background: '#ff5e1a',
-                border: '1px solid var(--glass-border)',
-                borderRadius: '6px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span style={{ color: '#000000', fontFamily: 'var(--font-sans)', fontSize: '14px', fontWeight: 700, lineHeight: 1 }}>W</span>
-            </div>
-            <span
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '12px',
-                fontWeight: 700,
-                color: 'var(--text)',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Workflow Architect
-            </span>
-          </div>
-          {/* Mock pill tabs */}
-          <div
+        <span className="bp-label bp-label--accent">Diagnosis — sample output</span>
+        <span className="bp-label">Debug mode</span>
+      </div>
+
+      <div style={{ padding: '18px 16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <span
             style={{
-              display: 'flex',
-              background: 'var(--glass-elevated)',
-              border: '1px solid var(--glass-border)',
-              borderRadius: '100px',
-              padding: '2px',
-              gap: '2px',
-            }}
-          >
-            {['Generate', 'Visualize', 'Debug'].map((tab, i) => (
-              <div
-                key={tab}
-                style={{
-                  padding: '3px 10px',
-                  borderRadius: '100px',
-                  background: i === 0 ? 'var(--glass-floating)' : 'transparent',
-                  border: i === 0 ? '1px solid var(--glass-border-bright)' : '1px solid transparent',
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '10px',
-                  fontWeight: i === 0 ? 600 : 400,
-                  color: i === 0 ? 'var(--text)' : 'var(--text-faint)',
-                }}
-              >
-                {tab}
-              </div>
-            ))}
-          </div>
-          <div
-            style={{
-              width: '80px',
-              height: '24px',
-              background: 'rgba(74,222,128,0.08)',
-              border: '1px solid rgba(74,222,128,0.2)',
-              borderRadius: '100px',
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
+              gap: '6px',
+              border: '1px solid var(--danger)',
+              padding: '3px 9px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '8.5px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'var(--danger)',
+              background: 'var(--danger-dim)',
             }}
           >
-            <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#4ade80' }} />
-            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', fontWeight: 500, color: '#4ade80' }}>
-              Connected
-            </span>
-          </div>
-        </div>
-
-        {/* Mock canvas */}
-        <div
-          style={{
-            background: 'var(--base-canvas)',
-            padding: '32px 40px',
-            position: 'relative',
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: 'radial-gradient(circle, var(--glass-border) 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-              pointerEvents: 'none',
-            }}
-          />
-          <div style={{ position: 'relative' }}>
-            <WorkflowMock />
-          </div>
-        </div>
-
-        <div
-          style={{
-            background: 'var(--glass-surface)',
-            borderTop: '1px solid var(--glass-border)',
-            padding: '10px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-          }}
-        >
-          <div
-            style={{
-              width: '6px',
-              height: '6px',
-              borderRadius: '50%',
-              background: 'var(--tint-mint)',
-              animation: 'pulse 2s ease-in-out infinite',
-            }}
-          />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-faint)' }}>
-            Generated "Webhook → Classify → Slack" in 4.2s
+            <ShieldAlert size={10} />
+            Authentication
+          </span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--success)' }}>
+            92% CONFIDENCE
+          </span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--ink-faint)' }}>
+            NODE: Slack
           </span>
         </div>
+
+        <div
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '11px',
+            fontWeight: 700,
+            color: 'var(--ink)',
+            lineHeight: 1.55,
+          }}
+        >
+          The Slack node has no credential attached — n8n rejects the request before it reaches the API.
+        </div>
+
+        <p style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--ink-muted)', lineHeight: 1.65 }}>
+          The error <code style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--accent)' }}>
+          "Credentials for 'slackApi' are not set"</code> means the node references a credential type that was
+          never configured on this instance.
+        </p>
+
+        <div>
+          <div className="bp-label" style={{ marginBottom: '8px' }}>Suggested patch</div>
+          <div
+            style={{
+              border: '1px solid var(--line)',
+              borderLeft: '3px solid var(--success)',
+              padding: '9px 12px',
+              background: 'var(--paper-deep)',
+            }}
+          >
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--tint-transform)', marginBottom: '4px' }}>
+              Slack → credentials.slackApi
+            </div>
+            <div style={{ fontFamily: 'var(--font-sans)', fontSize: '11.5px', color: 'var(--ink-muted)' }}>
+              Attach your Slack API credential, or switch the node to use a webhook URL instead.
+            </div>
+          </div>
+        </div>
       </div>
-    </FadeIn>
+    </div>
   );
 }
+
+/* ───────────────────────── page ───────────────────────── */
 
 export default function Landing() {
   return (
     <div
       style={{
-        background: 'var(--base-bg)',
-        color: 'var(--text)',
+        background: 'var(--paper)',
+        color: 'var(--ink)',
         fontFamily: 'var(--font-sans)',
         minHeight: '100vh',
         overflowX: 'hidden',
+        padding: 'clamp(8px, 1.5vw, 16px)',
       }}
     >
-      {/* Nav */}
-      <nav
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 20,
-          borderBottom: '1px solid var(--glass-border)',
-          background: 'var(--glass-elevated)',
-          backdropFilter: 'var(--glass-blur-elevated)',
-          WebkitBackdropFilter: 'var(--glass-blur-elevated)',
-          boxShadow: 'var(--shadow-inset-top), var(--shadow-rest)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 40px',
-          height: '56px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-          <div
-            style={{
-              width: '28px',
-              height: '28px',
-              background: '#ff5e1a',
-              border: '1px solid var(--glass-border)',
-              borderTopColor: 'var(--glass-border-bright)',
-              borderRadius: 'var(--radius-sm)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: 'var(--shadow-inset-top)',
-            }}
-          >
-            <span style={{ color: '#000000', fontFamily: 'var(--font-sans)', fontSize: '16px', fontWeight: 700, lineHeight: 1 }}>W</span>
-          </div>
-          <span
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: '15px',
-              fontWeight: 700,
-              color: 'var(--text)',
-              letterSpacing: '-0.03em',
-            }}
-          >
-            Workflow Architect
-          </span>
-        </div>
+      {/* ── Drawing-sheet frame around the whole page ── */}
+      <div style={{ position: 'relative', border: '1px solid var(--line-strong)', minHeight: 'calc(100vh - 32px)' }}>
+        <Ticks color="var(--accent)" size={9} inset={-2} />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <a
-            href="https://github.com/dhillon1995/workflow-architect"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              fontFamily: 'var(--font-sans)',
-              fontSize: '13px',
-              fontWeight: 500,
-              color: 'var(--text-muted)',
-              textDecoration: 'none',
-              transition: 'color 0.15s',
-            }}
-          >
-            GitHub <ExternalLink size={11} />
-          </a>
-          <Link
-            to="/app"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'var(--glass-floating)',
-              backdropFilter: 'var(--glass-blur-floating)',
-              color: 'var(--text)',
-              fontFamily: 'var(--font-sans)',
-              fontSize: '13px',
-              fontWeight: 600,
-              padding: '7px 16px',
-              borderRadius: 'var(--radius-pill)',
-              textDecoration: 'none',
-              letterSpacing: '-0.01em',
-              border: '1px solid var(--glass-border)',
-              borderTopColor: 'var(--glass-border-bright)',
-              boxShadow: 'var(--shadow-inset-top), var(--shadow-rest)',
-              transition: 'box-shadow 0.2s, transform 0.15s',
-            }}
-          >
-            Open app <ArrowRight size={13} />
-          </Link>
-        </div>
-      </nav>
-
-      {/* Hero */}
-      <section
-        style={{
-          position: 'relative',
-          maxWidth: '960px',
-          margin: '0 auto',
-          padding: '50px 40px 64px',
-          textAlign: 'center',
-          overflow: 'hidden',
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          style={{ position: 'relative' }}
+        {/* ── Nav ── */}
+        <nav
+          style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 20,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 clamp(16px, 4vw, 40px)',
+            height: '60px',
+            borderBottom: '1px solid var(--line)',
+            background: 'color-mix(in srgb, var(--paper) 88%, transparent)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+          }}
         >
-          {/* Badge */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'var(--glass-floating)',
-              backdropFilter: 'var(--glass-blur-floating)',
-              border: '1px solid var(--glass-border)',
-              borderTopColor: 'var(--glass-border-bright)',
-              borderRadius: 'var(--radius-pill)',
-              padding: '5px 14px',
-              fontFamily: 'var(--font-sans)',
-              fontSize: '12px',
-              fontWeight: 500,
-              color: 'var(--text-muted)',
-              marginBottom: '28px',
-              boxShadow: 'var(--shadow-inset-top)',
-            }}
-          >
-            <span
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+            <div
               style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: 'var(--tint-mint)',
-                display: 'inline-block',
-              }}
-            />
-            n8n workflow tooling, powered by Claude
-          </div>
-
-          <h1
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: 'clamp(38px, 5.5vw, 68px)',
-              fontWeight: 700,
-              lineHeight: 1.08,
-              letterSpacing: '-0.04em',
-              color: 'var(--text)',
-              marginBottom: '36px',
-            }}
-          >
-            Generate. Visualise.{' '}
-            <span style={{ color: 'var(--tint-sky)' }}>Debug.</span>
-          </h1>
-
-          {/* Demo video */}
-          <div
-            style={{
-              maxWidth: '720px',
-              margin: '0 auto 32px',
-              background: 'var(--glass-floating)',
-              backdropFilter: 'var(--glass-blur-floating)',
-              WebkitBackdropFilter: 'var(--glass-blur-floating)',
-              border: '1px solid var(--glass-border)',
-              borderTopColor: 'var(--glass-border-bright)',
-              borderRadius: 'var(--radius-xl)',
-              overflow: 'hidden',
-              boxShadow: 'var(--shadow-inset-top), var(--shadow-lift)',
-            }}
-          >
-            <video
-              src="/projects/workflowarchitect/demo.mp4"
-              autoPlay
-              loop
-              muted
-              controls
-              playsInline
-              preload="auto"
-              style={{
-                display: 'block',
-                width: '100%',
-                height: 'auto',
-                background: 'var(--base-canvas)',
+                width: '26px',
+                height: '26px',
+                flexShrink: 0,
+                border: '1.5px solid var(--accent)',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              Your browser does not support the video tag.
-            </video>
+              <span style={{ width: '8px', height: '8px', background: 'var(--accent)' }} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, minWidth: 0 }}>
+              <span
+                className="nav-brand-title"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '17px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Workflow Architect
+              </span>
+              <span className="bp-label nav-brand-sub" style={{ fontSize: '7.5px', whiteSpace: 'nowrap' }}>
+                DWG NO. WA-001 · REV B
+              </span>
+            </div>
           </div>
 
-          <p
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: '17px',
-              fontWeight: 400,
-              color: 'var(--text-muted)',
-              lineHeight: 1.65,
-              maxWidth: '540px',
-              margin: '0 auto 40px',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Describe a workflow in plain English. Get valid n8n JSON, an interactive
-            canvas, and — when things break — a structured diagnosis with one-click fix.
-          </p>
-
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <a
+              href="https://github.com/dhillon1995/workflow-architect"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 14px',
+                fontSize: '10px',
+                textDecoration: 'none',
+              }}
+            >
+              <Github size={12} />
+              <span className="nav-gh-label">Source</span>
+            </a>
             <Link
               to="/app"
+              className="btn-primary"
               style={{
-                display: 'inline-flex',
+                display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                background: 'var(--glass-floating)',
-                backdropFilter: 'var(--glass-blur-floating)',
-                color: 'var(--text)',
-                fontFamily: 'var(--font-sans)',
-                fontSize: '14px',
-                fontWeight: 600,
-                padding: '12px 26px',
-                borderRadius: 'var(--radius-pill)',
+                gap: '7px',
+                padding: '8px 16px',
+                fontSize: '10px',
                 textDecoration: 'none',
-                letterSpacing: '-0.01em',
-                border: '1px solid var(--glass-border)',
-                borderTopColor: 'var(--glass-border-bright)',
-                boxShadow: 'var(--shadow-inset-top), var(--shadow-float)',
-                transition: 'transform 0.15s, box-shadow 0.2s',
               }}
             >
-              Try it free <ArrowRight size={15} />
+              Open app <ArrowRight size={12} />
             </Link>
-            <a
-              href="#how-it-works"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'transparent',
-                color: 'var(--text-muted)',
-                fontFamily: 'var(--font-sans)',
-                fontSize: '14px',
-                fontWeight: 500,
-                padding: '12px 22px',
-                borderRadius: 'var(--radius-pill)',
-                border: '1px solid var(--glass-border)',
-                textDecoration: 'none',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              How it works
-            </a>
           </div>
-        </motion.div>
-      </section>
+        </nav>
 
-      {/* Three modes */}
-      <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px 80px' }}>
-        <FadeIn>
-          <div style={{ marginBottom: '36px' }}>
-            <h2
+        {/* ── Hero ── */}
+        <section
+          style={{
+            maxWidth: '1060px',
+            margin: '0 auto',
+            padding: 'clamp(40px, 7vw, 80px) clamp(16px, 4vw, 40px) clamp(48px, 6vw, 80px)',
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '22px' }}>
+              <span style={{ width: '28px', height: '1px', background: 'var(--accent)' }} />
+              <span className="bp-label bp-label--accent">
+                n8n workflow tooling · drafted by Claude
+              </span>
+            </div>
+
+            <h1
               style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '30px',
-                fontWeight: 700,
-                letterSpacing: '-0.03em',
-                color: 'var(--text)',
-                marginBottom: '8px',
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(54px, 10vw, 124px)',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                lineHeight: 0.92,
+                letterSpacing: '0.005em',
+                marginBottom: '26px',
               }}
             >
-              Three tools in one
-            </h2>
-            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '15px', color: 'var(--text-muted)', letterSpacing: '-0.01em' }}>
-              Switch between modes with Ctrl+1 / Ctrl+2 / Ctrl+3.
+              Automation,
+              <br />
+              <span style={{ color: 'var(--accent)' }}>drafted to spec.</span>
+            </h1>
+
+            <p
+              style={{
+                fontSize: 'clamp(14px, 1.6vw, 16px)',
+                color: 'var(--ink-muted)',
+                lineHeight: 1.7,
+                maxWidth: '560px',
+                marginBottom: '34px',
+              }}
+            >
+              Describe a workflow in plain English. Workflow Architect drafts valid n8n JSON on an
+              interactive canvas — and when a workflow breaks, it hands you a structured diagnosis
+              with a one-click fix.
             </p>
-          </div>
-        </FadeIn>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
-          {MODES.map(({ Icon, label, tintVar, accentVar, desc }, i) => (
-            <FadeIn key={label} delay={i * 0.08}>
-              <div
-                className="glass glass-floating"
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '52px' }}>
+              <Link
+                to="/app"
+                className="btn-primary"
                 style={{
-                  border: '1px solid var(--glass-border)',
-                  borderTopColor: 'var(--glass-border-bright)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: '26px',
-                  height: '100%',
-                  transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.2s',
-                  boxShadow: 'var(--shadow-inset-top), var(--shadow-rest)',
-                  cursor: 'default',
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget as HTMLDivElement;
-                  el.style.borderColor = 'var(--glass-border-active)';
-                  el.style.boxShadow = `var(--shadow-inset-top), var(--shadow-float)`;
-                  el.style.transform = 'translateY(-3px)';
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget as HTMLDivElement;
-                  el.style.borderColor = 'var(--glass-border)';
-                  el.style.borderTopColor = 'var(--glass-border-bright)';
-                  el.style.boxShadow = 'var(--shadow-inset-top), var(--shadow-rest)';
-                  el.style.transform = 'translateY(0)';
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '9px',
+                  padding: '13px 26px',
+                  fontSize: '11px',
+                  textDecoration: 'none',
                 }}
               >
-                <div
-                  style={{
-                    width: '42px',
-                    height: '42px',
-                    background: `var(${accentVar})`,
-                    border: '1px solid var(--glass-border)',
-                    borderTopColor: 'var(--glass-border-bright)',
-                    borderRadius: 'var(--radius-md)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '18px',
-                    color: `var(${tintVar})`,
-                    boxShadow: 'var(--shadow-inset-top)',
-                  }}
-                >
-                  <Icon size={18} />
-                </div>
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    color: 'var(--text)',
-                    marginBottom: '8px',
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  {label}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '13px',
-                    color: 'var(--text-muted)',
-                    lineHeight: 1.65,
-                    letterSpacing: '-0.01em',
-                  }}
-                >
-                  {desc}
-                </p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="how-it-works" style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px 80px' }}>
-        <FadeIn>
-          <div style={{ marginBottom: '36px' }}>
-            <h2
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '30px',
-                fontWeight: 700,
-                letterSpacing: '-0.03em',
-                color: 'var(--text)',
-                marginBottom: '8px',
-              }}
-            >
-              How generate works
-            </h2>
-            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '15px', color: 'var(--text-muted)', letterSpacing: '-0.01em' }}>
-              Two-step LLM pipeline prevents hallucinated node types.
-            </p>
-          </div>
-        </FadeIn>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-          {STEPS.map((step, i) => (
-            <FadeIn key={step.n} delay={i * 0.07}>
-              <div
-                className="glass glass-floating"
+                Open the drafting table <ArrowRight size={14} />
+              </Link>
+              <a
+                href="#demo"
+                className="btn-ghost"
                 style={{
-                  border: '1px solid var(--glass-border)',
-                  borderTopColor: 'var(--glass-border-bright)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: '22px 20px',
-                  boxShadow: 'var(--shadow-inset-top), var(--shadow-rest)',
-                  position: 'relative',
-                  overflow: 'hidden',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '13px 22px',
+                  fontSize: '11px',
+                  textDecoration: 'none',
                 }}
               >
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '-8px',
-                    right: '-4px',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '52px',
-                    fontWeight: 800,
-                    color: 'var(--glass-border)',
-                    letterSpacing: '-0.04em',
-                    lineHeight: 1,
-                    pointerEvents: 'none',
-                    userSelect: 'none',
-                  }}
-                >
-                  {step.n}
-                </div>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '26px',
-                    height: '26px',
-                    background: 'var(--accent-sky)',
-                    border: '1px solid var(--glass-border)',
-                    borderTopColor: 'var(--glass-border-bright)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    color: 'var(--tint-sky)',
-                    marginBottom: '14px',
-                  }}
-                >
-                  {step.n}
-                </div>
-                <h4
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    color: 'var(--text)',
-                    marginBottom: '6px',
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  {step.title}
-                </h4>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '12px',
-                    color: 'var(--text-muted)',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {step.desc}
-                </p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
+                60-sec demo
+              </a>
+            </div>
+          </motion.div>
 
-        <FadeIn delay={0.3}>
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <HeroSchematic />
+          </motion.div>
+
+          {/* Spec strip */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
             style={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              marginTop: '24px',
-              padding: '12px',
               flexWrap: 'wrap',
+              gap: '10px 28px',
+              justifyContent: 'center',
+              padding: '22px 8px 0',
             }}
           >
-            {STEPS.map((step, i) => (
-              <div key={step.n} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
+            {[
+              '62-node catalog',
+              'Two-step LLM pipeline',
+              'Zod-validated output',
+              'Credentials never leave your browser',
+            ].map((s, i) => (
+              <span key={s} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="bp-label bp-label--bright" style={{ fontSize: '8.5px' }}>{s}</span>
+                {i < 3 && <span style={{ width: '4px', height: '4px', background: 'var(--accent-line)', transform: 'rotate(45deg)' }} />}
+              </span>
+            ))}
+          </motion.div>
+        </section>
+
+        {/* ── Index of drawings (modes) ── */}
+        <section style={{ maxWidth: '1060px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px) clamp(56px, 7vw, 96px)' }}>
+          <FadeIn>
+            <SectionHead
+              fig="Index of drawings"
+              title="Three sheets in the set"
+              note="One canvas, three modes. Switch with Ctrl+1 / 2 / 3 — or hit Ctrl+K for the command palette."
+            />
+          </FadeIn>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: '14px',
+            }}
+          >
+            {SHEETS.map((sheet, i) => (
+              <FadeIn key={sheet.no} delay={i * 0.08}>
+                <div
                   style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    color: 'var(--text-muted)',
-                    letterSpacing: '-0.01em',
+                    position: 'relative',
+                    background: 'var(--panel)',
+                    border: '1px solid var(--line)',
+                    padding: '24px 22px 22px',
+                    height: '100%',
+                    overflow: 'hidden',
+                    transition: 'border-color 0.2s, transform 0.2s, box-shadow 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.borderColor = 'var(--accent-line)';
+                    el.style.transform = 'translateY(-3px)';
+                    el.style.boxShadow = 'var(--shadow-float)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.borderColor = 'var(--line)';
+                    el.style.transform = 'translateY(0)';
+                    el.style.boxShadow = 'none';
                   }}
                 >
-                  {step.title}
-                </span>
-                {i < STEPS.length - 1 && (
-                  <MoveRight size={14} style={{ color: 'var(--tint-sky)', opacity: 0.5, flexShrink: 0 }} />
+                  {/* ghost sheet numeral */}
+                  <span
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      top: '-18px',
+                      right: '-6px',
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '110px',
+                      fontWeight: 800,
+                      color: 'transparent',
+                      WebkitTextStroke: '1px var(--line)',
+                      lineHeight: 1,
+                      userSelect: 'none',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    {sheet.no}
+                  </span>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                    <span className="bp-label" style={{ color: sheet.tint }}>
+                      Sheet {sheet.no}
+                    </span>
+                    {sheet.badge && (
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '7.5px',
+                          fontWeight: 700,
+                          letterSpacing: '0.14em',
+                          textTransform: 'uppercase',
+                          color: 'var(--accent-ink)',
+                          background: 'var(--accent)',
+                          padding: '2px 6px',
+                        }}
+                      >
+                        {sheet.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '30px',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.02em',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    {sheet.title}
+                  </h3>
+
+                  <p style={{ fontSize: '13px', color: 'var(--ink-muted)', lineHeight: 1.65, marginBottom: '18px' }}>
+                    {sheet.desc}
+                  </p>
+
+                  <span className="bp-label">
+                    <kbd>Ctrl</kbd> <kbd>{sheet.kbd}</kbd>
+                  </span>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Pipeline ── */}
+        <section style={{ maxWidth: '1060px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px) clamp(56px, 7vw, 96px)' }}>
+          <FadeIn>
+            <SectionHead
+              fig="Fig. 02 — Generate mode internals"
+              title="The drafting pipeline"
+              note="Classify first against the full catalog, then build from a focused subset. The model can't hallucinate node types it was never shown — and the final JSON is produced by a pure function, not the LLM."
+            />
+          </FadeIn>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+              gap: '0',
+              border: '1px solid var(--line)',
+              position: 'relative',
+              background: 'var(--panel)',
+            }}
+          >
+            <Ticks />
+            {PIPELINE.map((step, i) => (
+              <FadeIn key={step.n} delay={i * 0.07}>
+                <div
+                  style={{
+                    padding: '24px 22px',
+                    borderRight: i < PIPELINE.length - 1 ? '1px dashed var(--line)' : 'none',
+                    height: '100%',
+                    position: 'relative',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        color: 'var(--accent)',
+                        border: '1px solid var(--accent-line)',
+                        padding: '3px 7px',
+                      }}
+                    >
+                      {step.n}
+                    </span>
+                    <span style={{ flex: 1, height: '1px', background: 'var(--line)' }} />
+                    {i < PIPELINE.length - 1 && (
+                      <span style={{ color: 'var(--accent-line)', fontFamily: 'var(--font-mono)', fontSize: '10px' }}>→</span>
+                    )}
+                  </div>
+                  <h4
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '22px',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.03em',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {step.title}
+                  </h4>
+                  <p style={{ fontSize: '12px', color: 'var(--ink-muted)', lineHeight: 1.65 }}>
+                    {step.desc}
+                  </p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Debug spotlight ── */}
+        <section style={{ maxWidth: '1060px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px) clamp(56px, 7vw, 96px)' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 'clamp(24px, 4vw, 48px)',
+              alignItems: 'center',
+            }}
+          >
+            <FadeIn>
+              <div>
+                <SectionHead
+                  fig="Sheet 03 — the differentiator"
+                  title="Redline review"
+                  note=""
+                />
+                <p style={{ fontSize: '14px', color: 'var(--ink-muted)', lineHeight: 1.7, marginBottom: '22px', marginTop: '-16px' }}>
+                  Plenty of tools generate workflows. Almost none can tell you why yours broke.
+                  Paste a failing workflow and its error message — Debug mode returns a structured
+                  diagnosis, not a paragraph of guesswork.
+                </p>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {[
+                    'Root cause classified into 8 failure categories, with a confidence score',
+                    'Parameter-level patch applied to the exact node and path that failed',
+                    'Side-by-side diff of original vs fixed JSON before you accept anything',
+                    'One click to apply on canvas — or deploy the fix straight to your n8n',
+                  ].map((li) => (
+                    <li key={li} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                      <span
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          flexShrink: 0,
+                          marginTop: '5px',
+                          border: '1.5px solid var(--accent)',
+                          transform: 'rotate(45deg)',
+                        }}
+                      />
+                      <span style={{ fontSize: '13px', color: 'var(--ink)', lineHeight: 1.6 }}>{li}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <MockDiagnosis />
+            </FadeIn>
+          </div>
+        </section>
+
+        {/* ── Demo ── */}
+        <section id="demo" style={{ maxWidth: '1060px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px) clamp(56px, 7vw, 96px)' }}>
+          <FadeIn>
+            <SectionHead fig="As-built recording" title="See a full draft" note="Prompt to deployable workflow, in real time." />
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <div style={{ position: 'relative', border: '1px solid var(--line)', background: 'var(--panel)' }}>
+              <Ticks color="var(--accent-line)" />
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 16px',
+                  borderBottom: '1px solid var(--line)',
+                }}
+              >
+                <span className="bp-label bp-label--accent">Recording WA-001-D</span>
+                <span className="bp-label">60 sec · muted</span>
+              </div>
+              <video
+                src="/projects/workflowarchitect/demo.mp4"
+                autoPlay
+                loop
+                muted
+                controls
+                playsInline
+                preload="auto"
+                style={{ display: 'block', width: '100%', height: 'auto', background: 'var(--paper-deep)' }}
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* ── Bill of materials ── */}
+        <section style={{ maxWidth: '1060px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px) clamp(56px, 7vw, 96px)' }}>
+          <FadeIn>
+            <SectionHead
+              fig="Schedule of components"
+              title="Bill of materials"
+              note="What this is actually built from — for the engineers reading."
+            />
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <div style={{ position: 'relative', border: '1px solid var(--line)' }}>
+              <Ticks />
+              {BOM.map((row, i) => (
+                <div
+                  key={row.ref}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '52px minmax(110px, 180px) 1fr',
+                    borderBottom: i < BOM.length - 1 ? '1px solid var(--line)' : 'none',
+                    background: i % 2 === 0 ? 'var(--panel)' : 'transparent',
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '13px 0',
+                      textAlign: 'center',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      color: 'var(--accent)',
+                      borderRight: '1px solid var(--line)',
+                    }}
+                  >
+                    {row.ref}
+                  </div>
+                  <div
+                    style={{
+                      padding: '13px 16px',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '9px',
+                      fontWeight: 500,
+                      letterSpacing: '0.14em',
+                      textTransform: 'uppercase',
+                      color: 'var(--ink-muted)',
+                      borderRight: '1px dashed var(--line)',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {row.item}
+                  </div>
+                  <div
+                    style={{
+                      padding: '13px 16px',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '13px',
+                      color: 'var(--ink)',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {row.spec}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* ── CTA ── */}
+        <section style={{ maxWidth: '1060px', margin: '0 auto', padding: '0 clamp(16px, 4vw, 40px) clamp(64px, 8vw, 110px)' }}>
+          <FadeIn>
+            <div
+              style={{
+                position: 'relative',
+                border: '1px solid var(--line-strong)',
+                padding: 'clamp(40px, 6vw, 72px) clamp(20px, 4vw, 48px)',
+                textAlign: 'center',
+                overflow: 'hidden',
+              }}
+              className="sheet-grid"
+            >
+              <Ticks color="var(--accent)" size={9} />
+              {/* rotated stamp */}
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  top: '22px',
+                  right: 'clamp(-30px, 1vw, 36px)',
+                  transform: 'rotate(8deg)',
+                  border: '2px solid var(--accent)',
+                  color: 'var(--accent)',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                  padding: '7px 14px',
+                  opacity: 0.85,
+                  userSelect: 'none',
+                }}
+              >
+                Ready for issue
+              </span>
+
+              <h2
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(40px, 7vw, 76px)',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  lineHeight: 0.95,
+                  marginBottom: '16px',
+                }}
+              >
+                Your first draft is
+                <br />
+                <span style={{ color: 'var(--accent)' }}>ten seconds away.</span>
+              </h2>
+              <p style={{ fontSize: '14px', color: 'var(--ink-muted)', marginBottom: '32px' }}>
+                No account. No setup. Describe the workflow — the architect does the rest.
+              </p>
+              <Link
+                to="/app"
+                className="btn-primary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '9px',
+                  padding: '14px 30px',
+                  fontSize: '11px',
+                  textDecoration: 'none',
+                }}
+              >
+                Open Workflow Architect <ArrowRight size={14} />
+              </Link>
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* ── Footer title block ── */}
+        <footer style={{ borderTop: '1px solid var(--line-strong)' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            }}
+          >
+            {[
+              { k: 'Project', v: 'Workflow Architect' },
+              { k: 'Drawn by', v: 'Sandip Dhillon', href: 'https://sandipdhillon.co.uk' },
+              { k: 'Checked by', v: 'Claude Sonnet 4.6' },
+              { k: 'Scale', v: '1:1' },
+              { k: 'Sheet', v: '01 of 01' },
+              { k: 'Rev', v: 'B — Drafting set' },
+            ].map((cell) => (
+              <div
+                key={cell.k}
+                style={{
+                  padding: '12px 16px 14px',
+                  borderRight: '1px solid var(--line)',
+                  borderBottom: '1px solid var(--line)',
+                }}
+              >
+                <div className="bp-label" style={{ marginBottom: '5px' }}>{cell.k}</div>
+                {cell.href ? (
+                  <a
+                    href={cell.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      color: 'var(--accent)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {cell.v}
+                  </a>
+                ) : (
+                  <span style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', fontWeight: 600, color: 'var(--ink)' }}>
+                    {cell.v}
+                  </span>
                 )}
               </div>
             ))}
           </div>
-        </FadeIn>
-
-        {/* Example generated output */}
-        <div style={{ marginTop: '32px' }}>
-          <AppPreviewCard delay={0.4} />
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px 100px' }}>
-        <FadeIn>
           <div
-            className="glass glass-floating"
             style={{
-              border: '1px solid var(--glass-border)',
-              borderTopColor: 'var(--glass-border-bright)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '56px 48px',
-              textAlign: 'center',
-              overflow: 'hidden',
-              position: 'relative',
-              boxShadow: 'var(--shadow-inset-top), var(--shadow-float)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '8px',
+              padding: '14px clamp(16px, 4vw, 40px)',
             }}
           >
-            <h2
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '34px',
-                fontWeight: 700,
-                letterSpacing: '-0.04em',
-                color: 'var(--text)',
-                marginBottom: '12px',
-                position: 'relative',
-              }}
-            >
-              Ready to build?
-            </h2>
-            <p
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '15px',
-                color: 'var(--text-muted)',
-                marginBottom: '32px',
-                lineHeight: 1.6,
-                position: 'relative',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              Generate your first workflow in under 10 seconds.
-            </p>
-            <Link
-              to="/app"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'var(--glass-elevated)',
-                backdropFilter: 'var(--glass-blur-elevated)',
-                color: 'var(--text)',
-                fontFamily: 'var(--font-sans)',
-                fontSize: '14px',
-                fontWeight: 600,
-                padding: '13px 30px',
-                borderRadius: 'var(--radius-pill)',
-                textDecoration: 'none',
-                letterSpacing: '-0.01em',
-                position: 'relative',
-                border: '1px solid var(--glass-border)',
-                borderTopColor: 'var(--glass-border-bright)',
-                boxShadow: 'var(--shadow-inset-top), var(--shadow-float)',
-              }}
-            >
-              Open Workflow Architect <ArrowRight size={15} />
-            </Link>
+            <span className="bp-label">© {new Date().getFullYear()} Sandip Dhillon · sandipdhillon.co.uk</span>
+            <span className="bp-label">Built with Claude · n8n · React</span>
           </div>
-        </FadeIn>
-      </section>
-
-      {/* Footer */}
-      <footer
-        style={{
-          borderTop: '1px solid var(--glass-border)',
-          padding: '22px 40px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '8px',
-        }}
-      >
-        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--text-faint)' }}>
-          Sandip Dhillon · sandipdhillon.co.uk
-        </span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-faint)' }}>
-          Built with Claude Sonnet · n8n
-        </span>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }

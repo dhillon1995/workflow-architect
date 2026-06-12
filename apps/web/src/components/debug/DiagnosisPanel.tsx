@@ -4,16 +4,16 @@ import type { WorkflowDiagnosis } from '@workflow-architect/shared';
 
 const CATEGORY_META: Record<
   WorkflowDiagnosis['category'],
-  { label: string; color: string; tintBg: string; Icon: React.ComponentType<{ size: number }> }
+  { label: string; color: string; Icon: React.ComponentType<{ size: number }> }
 > = {
-  auth:       { label: 'Authentication', color: 'var(--color-danger)',   tintBg: 'rgba(248,113,113,0.08)',  Icon: ShieldAlert },
-  params:     { label: 'Parameters',     color: 'var(--color-warning)',  tintBg: 'rgba(251,191,36,0.07)',   Icon: Wrench },
-  expression: { label: 'Expression',     color: 'var(--tint-lavender)',  tintBg: 'var(--accent-lavender)',  Icon: Code2 },
-  connection: { label: 'Connection',     color: 'var(--tint-peach)',     tintBg: 'var(--accent-peach)',     Icon: Link2 },
-  logic:      { label: 'Logic',          color: 'var(--tint-sky)',       tintBg: 'var(--accent-sky)',       Icon: GitBranch },
-  version:    { label: 'Version',        color: 'var(--tint-mint)',      tintBg: 'var(--accent-mint)',      Icon: Clock },
-  timeout:    { label: 'Timeout',        color: 'var(--text-muted)',     tintBg: 'var(--glass-border)',     Icon: Clock },
-  other:      { label: 'Other',          color: 'var(--text-faint)',     tintBg: 'var(--glass-border)',     Icon: AlertTriangle },
+  auth:       { label: 'Authentication', color: 'var(--danger)',           Icon: ShieldAlert },
+  params:     { label: 'Parameters',     color: 'var(--warning)',          Icon: Wrench },
+  expression: { label: 'Expression',     color: 'var(--tint-integration)', Icon: Code2 },
+  connection: { label: 'Connection',     color: 'var(--accent)',           Icon: Link2 },
+  logic:      { label: 'Logic',          color: 'var(--tint-transform)',   Icon: GitBranch },
+  version:    { label: 'Version',        color: 'var(--tint-action)',      Icon: Clock },
+  timeout:    { label: 'Timeout',        color: 'var(--ink-muted)',        Icon: Clock },
+  other:      { label: 'Other',          color: 'var(--ink-faint)',        Icon: AlertTriangle },
 };
 
 interface DiagnosisPanelProps {
@@ -33,19 +33,15 @@ export default function DiagnosisPanel({ diagnosis }: DiagnosisPanelProps) {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '5px',
-            background: meta.tintBg,
-            border: '1px solid var(--glass-border)',
-            borderTopColor: 'var(--glass-border-bright)',
-            borderRadius: 'var(--radius-sm)',
-            padding: '3px 10px',
+            gap: '6px',
+            border: `1px solid ${meta.color}`,
+            padding: '3px 9px',
             fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
+            fontSize: '8px',
             fontWeight: 700,
             color: meta.color,
-            letterSpacing: '0.06em',
+            letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            boxShadow: 'var(--shadow-inset-top)',
           }}
         >
           <Icon size={10} />
@@ -55,16 +51,17 @@ export default function DiagnosisPanel({ diagnosis }: DiagnosisPanelProps) {
         <span
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            color: confidence >= 80 ? 'var(--color-success)' : 'var(--text-faint)',
+            fontSize: '8.5px',
+            letterSpacing: '0.08em',
+            color: confidence >= 80 ? 'var(--success)' : 'var(--ink-faint)',
           }}
         >
-          {confidence}% confidence
+          {confidence}% CONFIDENCE
         </span>
 
         {diagnosis.affectedNodeName && (
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-faint)' }}>
-            node: <strong style={{ color: 'var(--text-muted)' }}>{diagnosis.affectedNodeName}</strong>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '8.5px', color: 'var(--ink-faint)' }}>
+            NODE: <strong style={{ color: 'var(--ink-muted)' }}>{diagnosis.affectedNodeName}</strong>
           </span>
         )}
       </div>
@@ -73,10 +70,10 @@ export default function DiagnosisPanel({ diagnosis }: DiagnosisPanelProps) {
       <div
         style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: '12px',
-          color: 'var(--text)',
-          fontWeight: 600,
-          lineHeight: 1.5,
+          fontSize: '11px',
+          color: 'var(--ink)',
+          fontWeight: 700,
+          lineHeight: 1.55,
         }}
       >
         {diagnosis.rootCause}
@@ -87,7 +84,7 @@ export default function DiagnosisPanel({ diagnosis }: DiagnosisPanelProps) {
         style={{
           fontFamily: 'var(--font-sans)',
           fontSize: '12px',
-          color: 'var(--text-muted)',
+          color: 'var(--ink-muted)',
           lineHeight: 1.65,
         }}
         className="diagnosis-markdown"
@@ -98,38 +95,27 @@ export default function DiagnosisPanel({ diagnosis }: DiagnosisPanelProps) {
       {/* Suggested fixes */}
       {diagnosis.suggestedFixes.length > 0 && (
         <div>
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '10px',
-              color: 'var(--text-faint)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              marginBottom: '6px',
-            }}
-          >
-            Suggested fixes
+          <div className="bp-label" style={{ marginBottom: '7px' }}>
+            Suggested patch
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {diagnosis.suggestedFixes.map((fix, i) => (
               <div
                 key={i}
-                className="glass-floating"
                 style={{
-                  border: '1px solid var(--glass-border)',
-                  borderTopColor: 'var(--glass-border-bright)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '8px 12px',
+                  border: '1px solid var(--line)',
+                  borderLeft: '3px solid var(--success)',
+                  background: 'var(--paper-deep)',
+                  padding: '9px 12px',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '4px',
-                  boxShadow: 'var(--shadow-inset-top)',
                 }}
               >
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--tint-sky)' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--tint-transform)' }}>
                   {fix.nodeName} → {fix.paramPath}
                 </div>
-                <div style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--text-muted)' }}>
+                <div style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--ink-muted)', lineHeight: 1.5 }}>
                   {fix.description}
                 </div>
               </div>
